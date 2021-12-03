@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF
+  xmlns:foaf="http://xmlns.com/foaf/0.1/"
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:dcat="http://www.w3.org/ns/dcat#"
+  xmlns:dct="http://purl.org/dc/terms/"
+  xmlns:vcard="http://www.w3.org/2006/vcard/ns#"
+  xmlns:dcatde="http://dcat-ap.de/def/dcatde/"
+>
+  <dcat:Dataset rdf:about="https://www.datenportal.bmbf.de/portal/0.14">
+    <dcatde:contributorID rdf:resource="http://dcat-ap.de/def/contributors/bundesministeriumFuerBildungUndForschung"/>
+    <dct:modified rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2021-12-02T13:37:39.413197</dct:modified>
+    <dcat:distribution>
+      <dcat:Distribution rdf:about="https://www.datenportal.bmbf.de/portal/Tabelle-0.14.csv#distribution">
+        <dct:license rdf:resource="http://dcat-ap.de/def/licenses/dl-by-de/2.0"/>
+        <dct:title>CSV - Ressource</dct:title>
+        <dct:modified rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2021-09-23T00:00:00</dct:modified>
+        <dcat:downloadURL rdf:resource="https://www.datenportal.bmbf.de/portal/Tabelle-0.14.csv"/>
+        <dct:conformsTo>http://dcat-ap.de/def/dcatde/1.0.2/</dct:conformsTo>
+        <dct:format rdf:resource="http://publications.europa.eu/resource/authority/file-type/CSV"/>
+        <dcat:accessURL rdf:resource="https://www.datenportal.bmbf.de/portal/Tabelle-0.14.csv"/>
+      </dcat:Distribution>
+    </dcat:distribution>
+    <dct:publisher>
+      <foaf:Organization rdf:about="https://www.datenportal.bmbf.de/portal/de/imprint.html#publisher">
+        <foaf:name>Bundesministerium für Bildung und Forschung</foaf:name>
+      </foaf:Organization>
+    </dct:publisher>
+    <dcat:contactPoint>
+      <vcard:Organization rdf:nodeID="N30f69a3654bb4b8c8caee2679538e02b">
+        <vcard:fn>Deutsches Zentrum für Hochschul- und Wissenschaftsforschung</vcard:fn>
+      </vcard:Organization>
+    </dcat:contactPoint>
+    <dct:title>Bevölkerung in Deutschland nach Alter und Geschlecht</dct:title>
+    <dcat:keyword>staatsangehörigkeit</dcat:keyword>
+    <dcat:distribution>
+      <dcat:Distribution rdf:about="https://www.datenportal.bmbf.de/portal/Tabelle-0.14.pdf#distribution">
+        <dcat:downloadURL rdf:resource="https://www.datenportal.bmbf.de/portal/Tabelle-0.14.pdf"/>
+        <dct:format rdf:resource="http://publications.europa.eu/resource/authority/file-type/PDF"/>
+        <dct:title>PDF - Ressource (Tabelle)</dct:title>
+        <dct:modified rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2021-09-23T00:00:00</dct:modified>
+        <dct:license rdf:resource="http://dcat-ap.de/def/licenses/dl-by-de/2.0"/>
+        <dct:conformsTo>http://dcat-ap.de/def/dcatde/1.0.2/</dct:conformsTo>
+        <dcat:accessURL rdf:resource="https://www.datenportal.bmbf.de/portal/Tabelle-0.14.pdf"/>
+      </dcat:Distribution>
+    </dcat:distribution>
+    <dcat:distribution>
+      <dcat:Distribution rdf:about="https://www.datenportal.bmbf.de/portal/Tabelle-0.14.xls#distribution">
+        <dct:license rdf:resource="http://dcat-ap.de/def/licenses/dl-by-de/2.0"/>
+        <dct:title>XLS - Ressource</dct:title>
+        <dcat:accessURL rdf:resource="https://www.datenportal.bmbf.de/portal/Tabelle-0.14.xls"/>
+        <dcat:downloadURL rdf:resource="https://www.datenportal.bmbf.de/portal/Tabelle-0.14.xls"/>
+        <dct:format rdf:resource="http://publications.europa.eu/resource/authority/file-type/XLS"/>
+        <dct:modified rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2021-09-23T00:00:00</dct:modified>
+        <dct:conformsTo>http://dcat-ap.de/def/dcatde/1.0.2/</dct:conformsTo>
+      </dcat:Distribution>
+    </dcat:distribution>
+    <dcat:keyword>geschlecht</dcat:keyword>
+    <dcat:keyword>alter</dcat:keyword>
+    <dct:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2019-10-03T03:51:50.918591</dct:issued>
+    <dcat:keyword>weiblich</dcat:keyword>
+    <dcat:keyword>nationalität</dcat:keyword>
+    <dcat:keyword>bevölkerung</dcat:keyword>
+    <dct:identifier>https://www.datenportal.bmbf.de/portal/0.14</dct:identifier>
+    <dcat:keyword>bundesländer</dcat:keyword>
+    <dct:description>Tabelle 0.14: Bevölkerung in Deutschland nach Alter und Geschlecht</dct:description>
+    <dcat:distribution>
+      <dcat:Distribution rdf:about="https://www.datenportal.bmbf.de/portal/Tabelle-0.14.html#distribution">
+        <dct:conformsTo>http://dcat-ap.de/def/dcatde/1.0.2/</dct:conformsTo>
+        <dcat:downloadURL rdf:resource="https://www.datenportal.bmbf.de/portal/Tabelle-0.14.html"/>
+        <dct:format rdf:resource="http://publications.europa.eu/resource/authority/file-type/HTML"/>
+        <dcat:accessURL rdf:resource="https://www.datenportal.bmbf.de/portal/Tabelle-0.14.html"/>
+        <dct:title>HTML - Ressource</dct:title>
+        <dct:license rdf:resource="http://dcat-ap.de/def/licenses/dl-by-de/2.0"/>
+        <dct:modified rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2021-09-23T00:00:00</dct:modified>
+      </dcat:Distribution>
+    </dcat:distribution>
+    <dcat:keyword>frauen</dcat:keyword>
+    <dcatde:maintainer>
+      <foaf:Organization rdf:nodeID="N2885d6276c754fa1babf92bae037bee1">
+        <foaf:name>Deutsches Zentrum für Hochschul- und Wissenschaftsforschung</foaf:name>
+      </foaf:Organization>
+    </dcatde:maintainer>
+    <dcat:theme rdf:resource="http://publications.europa.eu/resource/authority/data-theme/SOCI"/>
+  </dcat:Dataset>
+</rdf:RDF>
