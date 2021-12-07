@@ -30,5 +30,23 @@ df %>%
   mutate(year = as.integer(year)) %>%
   filter(year > 1999) %>%
   group_by(year) %>% 
-  summarise(n = n())
+  summarise(n = n_distinct(title)) %>%
+  ggplot(aes(x = year, y = n)) +
+  geom_line()
+
+#total and gendered datasets per year - no gendered data sets anywhere but in 2018. 
+#but we don't have all datasets in the df, we need to figure it out better
+
+
+df %>%
+  mutate(year = as.integer(year)) %>%
+  filter(year > 1999) %>%
+  mutate(gendered = if_else(str_detect(keyword, "weiblich|geschlecht"), "gendered", "not")) %>%
+  group_by(year, gendered) %>% 
+  summarise(n = n_distinct(title)) %>%
+  spread(gendered, n) %>%
+  mutate(gendered = replace_na(gendered, 0)) %>%
+  ggplot(aes(x = year)) +
+  geom_line(aes(y = gendered), color = "red") +
+  geom_line(aes(y = not), color = "black")
 
