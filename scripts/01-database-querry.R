@@ -32,7 +32,7 @@ LIMIT 5000
 ###STEP 2 - Use SPARQL to submit query and save results
 
 qd <- SPARQL(endpoint, query)
-df <- gd$results
+df <- qd$results
 
 ################USING API
 
@@ -122,6 +122,72 @@ df
 
 
 
+################# Dinahs Tries #############
 
+endp <- "https://www.govdata.de/ckan/api/action/current_package_list_with_resources"
+q <- list()
+resp <- resp <- GET(endp) # make the call
+json <- fromJSON(content(resp, as = "text")) #all dataset names as a list 
+
+##### GET THE TAGS #####
+# reduce the json to the list of tags
+json_tags <- json$result$tags
+
+# function to get the names of the tags
+get_tags <- function(x){
+  list(my_tags = x$name)
+} 
+
+# apply the function to the reduced json
+tags_list <- lapply(json_tags, get_tags)
+tags_list
+
+# create a dataframe of the tag names with the id of the element (needed for matching with other dataframes at the end)
+df_tags <- dplyr::bind_rows(tags_list,.id = "id")
+df_tags
+
+##### GET THE TITLES #######
+
+# get the titles in a dataframe
+df_titles <- as.data.frame(json$result$title)
+# change column name
+colnames(df_titles)[1] <- "titles"
+
+# add an id column
+df_titles <- tibble::rowid_to_column(df_titles, "id")
+
+
+##### GET THE GROUPS #####
+
+# reduce the json to the list of groups
+json_groups <- json$result$groups
+
+# function to get the names of the groups
+get_groups <- function(x){
+  list(my_groups = x$display_name)
+} 
+
+# apply the function to the reduced json
+groups_list <- lapply(json_groups, get_groups)
+
+# transform empty values, if there are any, into NA to keep them 
+groups_list <- lapply(groups_list, lapply, function(x)ifelse(is.null(x), NA, x))
+
+
+# create a dataframe of the groups names with the id of the element (needed for matching with other dataframes at the end)
+df_groups <- rbind.fill(lapply(groups_list, as.data.frame))
+df_groups <- tibble::rowid_to_column(df_groups, "id")
+
+
+
+##### GET THE DESCRIPTION #####
+
+# get the descriptions in a dataframe
+df_description <- as.data.frame(json$result$notes)
+# change column name
+colnames(df_description)[1] <- "description"
+
+# add an id column
+df_description <- tibble::rowid_to_column(df_description, "id")
 
 
