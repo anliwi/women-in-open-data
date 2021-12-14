@@ -1,5 +1,5 @@
 if (!require("pacman")) install.packages("pacman")
-pacman::p_load(jsonlite, tidyjson, httr)
+pacman::p_load(jsonlite, tidyjson, httr, doParallel, foreach)
 
 #this will be deleted later, if API works out fine
 if (!require("pacman")) install.packages("pacman")
@@ -124,10 +124,15 @@ df
 
 ################# Dinahs Tries #############
 
+
+
 endp <- "https://www.govdata.de/ckan/api/action/current_package_list_with_resources"
 q <- list()
 resp <- resp <- GET(endp) # make the call
 json <- fromJSON(content(resp, as = "text")) #all dataset names as a list 
+
+
+
 
 ##### GET THE TAGS #####
 # reduce the json to the list of tags
@@ -189,5 +194,70 @@ colnames(df_description)[1] <- "description"
 
 # add an id column
 df_description <- tibble::rowid_to_column(df_description, "id")
+
+###### TRY WITH BIG ELEMENT #####
+
+# TRY WITH 1000'er LISTS
+
+## set up parallel core use for getting the raw data
+n_cores <- detectCores()-1
+cl <- makeCluster(
+  n_cores,
+  type = 'PSOCK'
+)
+
+## write function to deregister the cores after use
+unregister_dopar <- function() {
+  env <- foreach:::.foreachGlobals
+  rm(list=ls(name=env), pos=env)
+}
+
+## getting the meta data of all 55000 datasets
+# Register cluster
+registerDoParallel(cl)
+
+# create empty list for json objects
+x <- list()
+
+# for loop to go over the urls and extend the limit each time and store the object in the json_list
+# tryout with 1:5 objects - final version has to be with 1:55
+json_list <- foreach(i=1:5,.packages = c('httr','jsonlite', 'tidyjson')) %dopar% {
+  
+  endp_one <- "https://www.govdata.de/ckan/api/action/current_package_list_with_resources?limit=1000&offset="
+  endp_two <- as.character(1001+1000*(i-1))
+  endp <- paste0(endp_one,endp_two)
+  resp <- GET(endp)
+  x <- fromJSON(content(resp, as = "text"))
+
+}
+
+# De-register cluster
+registerDoSEQ()
+unregister_dopar()
+
+
+######### GETTING THE RELEVANT DATA OUT OF THE JSON OBJECTS #########
+
+## specify all the functions needed
+# get the tags
+get_tags <- function(x){
+  list(my_tags = x$name)
+} 
+
+# get the groups
+get_groups <- function(x){
+  list(my_groups = x$display_name)
+} 
+
+## create empty dataframe with specified columns
+
+
+## building loops to get out the needed attributes and combine them in a list
+
+test_df <- for (i in json_list) {
+  json_tags <- [[i]]$result$tags
+  
+}
+
 
 
