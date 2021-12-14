@@ -180,7 +180,7 @@ groups_list <- lapply(groups_list, lapply, function(x)ifelse(is.null(x), NA, x))
 
 
 # create a dataframe of the groups names with the id of the element (needed for matching with other dataframes at the end)
-df_groups <- rbind.fill(lapply(groups_list, as.data.frame))
+df_groups <- plyr::rbind.fill(lapply(groups_list, as.data.frame))
 df_groups <- tibble::rowid_to_column(df_groups, "id")
 
 
@@ -195,9 +195,9 @@ colnames(df_description)[1] <- "description"
 # add an id column
 df_description <- tibble::rowid_to_column(df_description, "id")
 
-###### TRY WITH BIG ELEMENT #####
 
-# TRY WITH 1000'er LISTS
+
+
 
 ## set up parallel core use for getting the raw data
 n_cores <- detectCores()-1
@@ -238,26 +238,99 @@ unregister_dopar()
 
 ######### GETTING THE RELEVANT DATA OUT OF THE JSON OBJECTS #########
 
-## specify all the functions needed
-# get the tags
-get_tags <- function(x){
-  list(my_tags = x$name)
-} 
 
-# get the groups
-get_groups <- function(x){
-  list(my_groups = x$display_name)
-} 
+## create empty list/x for dataframes 
 
-## create empty dataframe with specified columns
 
 
 ## building loops to get out the needed attributes and combine them in a list
 
-test_df <- for (i in json_list) {
-  json_tags <- [[i]]$result$tags
+test_df <- foreach(i = 1:length(json_list), .combine = rbind)%do%{
   
+  ##### GET THE TAGS #####
+  # reduce the json to the list of tags
+  json_tags <- json_list[[i]]$result$tags
+  
+  # function to get the names of the tags
+  get_tags <- function(x){
+    list(my_tags = x$name)
+  } 
+  
+  # apply the function to the reduced json
+  tags_list <- lapply(json_tags, get_tags)
+  
+  # create a dataframe of the tag names with the id of the element (needed for matching with other dataframes at the end)
+  df_tags <- dplyr::bind_rows(tags_list,.id = "id")
+  
+  
+  ##### GET THE TITLES #######
+  
+  # get the titles in a dataframe
+  df_titles <- as.data.frame(json_list[[i]]$result$title)
+  # change column name
+  colnames(df_titles)[1] <- "titles"
+  
+  # add an id column
+  df_titles <- tibble::rowid_to_column(df_titles, "id")
+  
+  
+  ##### GET THE GROUPS #####
+  
+  # reduce the json to the list of groups
+  json_groups <- json_list[[i]]$result$groups
+  
+  # function to get the names of the groups
+  get_groups <- function(x){
+    list(my_groups = x$display_name)
+  } 
+  
+  # apply the function to the reduced json
+  groups_list <- lapply(json_groups, get_groups)
+  
+  # transform empty values, if there are any, into NA to keep them 
+  groups_list <- lapply(groups_list, lapply, function(x)ifelse(is.null(x), NA, x))
+  
+  
+  # create a dataframe of the groups names with the id of the element (needed for matching with other dataframes at the end)
+  df_groups <- plyr::rbind.fill(lapply(groups_list, as.data.frame))
+  df_groups <- tibble::rowid_to_column(df_groups, "id")
+  
+  
+  
+  ##### GET THE DESCRIPTION #####
+  
+  # get the descriptions in a dataframe
+  df_description <- as.data.frame(json_list[[i]]$result$notes)
+  # change column name
+  colnames(df_description)[1] <- "description"
+  
+  # add an id column
+  df_description <- tibble::rowid_to_column(df_description, "id")
+  
+  
+  assign('c_results',setNames(data.frame(matrix(ncol = 5,nrow = 1000)),c('id','title','description','tags','groups')))
+  
+  c_results$id <- unique(df_titles$id)
+  
+  for(j in 1:nrow(c_results)){
+    c_results[j,'tags'] <- toString(df_tags[which(df_tags[,'id']==j),'my_tags'])
+  }
+  
+  c_results
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
