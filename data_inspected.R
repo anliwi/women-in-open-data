@@ -6,11 +6,13 @@ library(dplyr)
 
 data_cl <- data %>% 
   select(-issued) %>% 
-  select(-dataset)
+  select(-dataset) %>% 
+  select(-theme)
+#select unique titles
 
-#library(topicmodels)
-#data_LDA <- LDA(data_cl, k=2, control = list(seed=1234))
-#data_LDA
+library(topicmodels)
+data_LDA <- LDA(data_cl, k=2, control = list(seed=1234))
+
 
 #titles
 titles <- data_cl %>% 
@@ -22,6 +24,7 @@ library(tidyverse)
 
 titles <- str_replace_all(titles, "[[:punct:]]", "")
 titles <- tolower(titles)
+titles <- titles[!duplicated(titles)]
 
 stopwords_regex = paste(stopwords('German'), collapse = '\\b|\\b')
 stopwords_regex = paste0('\\b', stopwords_regex, '\\b')
@@ -62,6 +65,7 @@ descriptions <- data_cl %>%
 
 descriptions <- str_replace_all(descriptions, "[[:punct:]]", "")
 descriptions <- tolower(descriptions)
+descriptions <- descriptions[!duplicated(descriptions)]
 
 stopwords_regex = paste(stopwords('German'), collapse = '\\b|\\b')
 stopwords_regex = paste0('\\b', stopwords_regex, '\\b')
@@ -77,4 +81,4 @@ descriptions_sort %>%
   table() %>% 
   sort(decreasing = TRUE) %>% 
   head(5)
-#seems like we got Englsih descriptions as it is giving me English stopwords which I did not filter for
+#seems like we got English descriptions as it is giving me English stopwords which I did not filter for
