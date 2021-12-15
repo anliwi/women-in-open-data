@@ -221,10 +221,11 @@ x <- list()
 
 # for loop to go over the urls and extend the limit each time and store the object in the json_list
 # tryout with 1:5 objects - final version has to be with 1:55
+
 json_list <- foreach(i=1:5,.packages = c('httr','jsonlite', 'tidyjson')) %dopar% {
   
   endp_one <- "https://www.govdata.de/ckan/api/action/current_package_list_with_resources?limit=1000&offset="
-  endp_two <- as.character(1001+1000*(i-1))
+  endp_two <- as.character(1001+1000*(i-1)) # change to the first offset 1?
   endp <- paste0(endp_one,endp_two)
   resp <- GET(endp)
   x <- fromJSON(content(resp, as = "text"))
@@ -238,35 +239,41 @@ unregister_dopar()
 
 ######### GETTING THE RELEVANT DATA OUT OF THE JSON OBJECTS #########
 
+## initialise two functions to get tags and groups
 
-## create empty list/x for dataframes 
+# function to get the names of the groups
+get_groups <- function(x){
+  list(my_groups = x$display_name)
+} 
 
-
+# function to get the names of the tags
+get_tags <- function(x){
+  list(my_tags = x$name)
+} 
 
 ## building loops to get out the needed attributes and combine them in a list
+## list of 56 dataframes and then bind_rows together (dplyr)
 
-test_df <- foreach(i = 1:length(json_list), .combine = rbind)%do%{
+test_df <- foreach(i = 1:length(json_list), .combine = rbind,.packages = c('httr','jsonlite', 'tidyjson','tidyverse'))%dopar%{
   
   ##### GET THE TAGS #####
   # reduce the json to the list of tags
   json_tags <- json_list[[i]]$result$tags
   
-  # function to get the names of the tags
-  get_tags <- function(x){
-    list(my_tags = x$name)
-  } 
-  
   # apply the function to the reduced json
   tags_list <- lapply(json_tags, get_tags)
+  
+  # transform empty values, if there are any, into NA to keep them 
+  tags_list <- lapply(tags_list, lapply, function(x)ifelse(is.null(x), NA, x))
   
   # create a dataframe of the tag names with the id of the element (needed for matching with other dataframes at the end)
   df_tags <- dplyr::bind_rows(tags_list,.id = "id")
   
   
   ##### GET THE TITLES #######
-  
   # get the titles in a dataframe
   df_titles <- as.data.frame(json_list[[i]]$result$title)
+  
   # change column name
   colnames(df_titles)[1] <- "titles"
   
@@ -275,26 +282,18 @@ test_df <- foreach(i = 1:length(json_list), .combine = rbind)%do%{
   
   
   ##### GET THE GROUPS #####
-  
   # reduce the json to the list of groups
   json_groups <- json_list[[i]]$result$groups
   
-  # function to get the names of the groups
-  get_groups <- function(x){
-    list(my_groups = x$display_name)
-  } 
-  
-  # apply the function to the reduced json
+  # apply the get_groups function to the reduced json
   groups_list <- lapply(json_groups, get_groups)
-  
+
   # transform empty values, if there are any, into NA to keep them 
   groups_list <- lapply(groups_list, lapply, function(x)ifelse(is.null(x), NA, x))
-  
   
   # create a dataframe of the groups names with the id of the element (needed for matching with other dataframes at the end)
   df_groups <- plyr::rbind.fill(lapply(groups_list, as.data.frame))
   df_groups <- tibble::rowid_to_column(df_groups, "id")
-  
   
   
   ##### GET THE DESCRIPTION #####
@@ -303,23 +302,44 @@ test_df <- foreach(i = 1:length(json_list), .combine = rbind)%do%{
   df_description <- as.data.frame(json_list[[i]]$result$notes)
   # change column name
   colnames(df_description)[1] <- "description"
-  
   # add an id column
   df_description <- tibble::rowid_to_column(df_description, "id")
   
+  ##### GET THE DATE - METADATA CREATED #####
   
-  assign('c_results',setNames(data.frame(matrix(ncol = 5,nrow = 1000)),c('id','title','description','tags','groups')))
+  # get the descriptions in a dataframe
+  df_date <- as.data.frame(json_list[[i]]$result$metadata_created)
+  # change column name
+  colnames(df_date)[1] <- "metadata_created"
+  # add id column
+  df_date <- tibble::rowid_to_column(df_date, "id")
+  # transform datatype to date
+  df_date$metadata_created <-  as.Date(substr(df_date$metadata_created,1,10))
   
+  
+  ##### BINDING DATAFRAMES TOGETHER #####
+  assign('c_results',setNames(data.frame(matrix(ncol = 6,nrow = 1000)),c('id','title','description','tags','groups','date')))
+  
+  ## add ID
   c_results$id <- unique(df_titles$id)
   
+  
+  
+  # add tags and groups
   for(j in 1:nrow(c_results)){
     c_results[j,'tags'] <- toString(df_tags[which(df_tags[,'id']==j),'my_tags'])
+    c_results[j,'groups'] <- toString(df_groups[which(df_groups[,'id']==j),'my_groups'])
+    c_results[j,'title'] <- toString(df_titles[which(df_titles[,'id']==j),'titles'])
+    c_results[j,'description'] <- toString(df_description[which(df_description[,'id']==j),'description'])
+    c_results[j,'date'] <- df_date[which(df_date[,'id']==j),'metadata_created']
   }
   
-  c_results
+  c_results[,'date'] <- as.Date(c_results[,'date'],origin = "1970-01-01")
 
 }
 
+
+#summarise(group_by(id), alltogether = paste(my_tags)) 
 
 
 
