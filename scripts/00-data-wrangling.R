@@ -25,7 +25,7 @@ x <- list()
 # for loop to go over the urls and extend the limit each time and store the object in the json_list
 # tryout with 1:5 objects - final version has to be with 1:55
 
-json_list <- foreach(i=1:5,.packages = c('httr','jsonlite', 'tidyjson')) %dopar% {
+json_list <- foreach(i=1:55,.packages = c('httr','jsonlite', 'tidyjson')) %dopar% {
   
   endp_one <- "https://www.govdata.de/ckan/api/action/current_package_list_with_resources?limit=1000&offset="
   endp_two <- as.character(1+1000*(i-1))
@@ -35,6 +35,9 @@ json_list <- foreach(i=1:5,.packages = c('httr','jsonlite', 'tidyjson')) %dopar%
   
 }
 
+# De-register cluster
+registerDoSEQ()
+unregister_dopar()
 
 ######### GETTING THE RELEVANT DATA OUT OF THE JSON OBJECTS #########
 
@@ -50,10 +53,13 @@ get_tags <- function(x){
   list(my_tags = x$name)
 } 
 
+# Register cluster
+registerDoParallel(cl)
+
 ## building loops to get out the needed attributes and combine them in a list
 ## list of 56 dataframes and then bind_rows together (dplyr)
 
-test_df <- foreach(i = 1:length(json_list), .combine = rbind)%do%{
+final_df <- foreach(i = 1:length(json_list), .combine = rbind,.packages = c('httr','jsonlite', 'tidyjson','tidyverse'))%dopar%{
   
   ##### GET THE TAGS #####
   # reduce the json to the list of tags
@@ -61,9 +67,6 @@ test_df <- foreach(i = 1:length(json_list), .combine = rbind)%do%{
   
   # apply the function to the reduced json
   tags_list <- lapply(json_tags, get_tags)
-  
-  # transform empty values, if there are any, into NA to keep them 
-  tags_list <- lapply(tags_list, lapply, function(x)ifelse(is.null(x), NA, x))
   
   # create a dataframe of the tag names with the id of the element (needed for matching with other dataframes at the end)
   df_tags <- dplyr::bind_rows(tags_list,.id = "id")
@@ -117,7 +120,7 @@ test_df <- foreach(i = 1:length(json_list), .combine = rbind)%do%{
   
   
   ##### BINDING DATAFRAMES TOGETHER #####
-  assign('c_results',setNames(data.frame(matrix(ncol = 6,nrow = 1000)),c('id','title','description','tags','groups','date')))
+  assign('c_results',setNames(data.frame(matrix(ncol = 6,nrow = nrow(json_list[[i]]$result))),c('id','title','description','tags','groups','date')))
   
   # add id column
   c_results$id <- unique(df_titles$id)
@@ -133,14 +136,14 @@ test_df <- foreach(i = 1:length(json_list), .combine = rbind)%do%{
   # transform date column
   c_results[,'date'] <- as.Date(c_results[,'date'],origin = "1970-01-01")
   
+  c_results
 }
 
 # De-register cluster
 registerDoSEQ()
 unregister_dopar()
 
-
-#summarise(group_by(id), alltogether = paste(my_tags)) 
+write.csv(final_df,paste0(getwd(),"/raw_data.csv"), row.names = FALSE)
 
 
 
