@@ -12,7 +12,7 @@ if (!require("pacman")) install.packages("pacman")
 pacman::p_load(tidyverse,topicmodels,quanteda)
 
 # load dataset
-clean_df <- read_csv("clean_data.csv")
+clean_df <- read_csv("data/clean_data.csv")
 
 # reduce dataframe to id and column that should be analyzed
 test_df <- clean_df[,c("id","tags")]
