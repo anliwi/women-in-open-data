@@ -26,3 +26,9 @@ raw_data$tags <- sub('^c[(]', '', raw_data$tags)
 #remove ")" from end of string
 raw_data$tags <- gsub("[)]", "", raw_data$tags)
 
+# create a new id column
+clean_df <- raw_data[,2:6]
+clean_df <- tibble::rowid_to_column(clean_df, "id")
+
+write.csv(clean_df,paste0(getwd(),"/clean_data.csv"), row.names = FALSE)
+
