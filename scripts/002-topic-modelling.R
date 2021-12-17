@@ -14,6 +14,29 @@ pacman::p_load(tidyverse,topicmodels,quanteda)
 # load dataset
 clean_df <- read_csv("data/clean_data.csv")
 
+groups_df <- clean_df %>%
+  mutate(wt = str_detect(groups,"wissenschaft und technologie")) %>%
+  mutate(gb = str_detect(groups,"bevoelkerung und gesellschaft")) %>%
+  mutate(bks = str_detect(groups,"bildung kultur und sport")) %>%
+  mutate(en = str_detect(groups,"energie")) %>%
+  mutate(ge = str_detect(groups,"gesundheit")) %>%
+  mutate(it = str_detect(groups,"internationale themen")) %>%
+  mutate(lfn = str_detect(groups,"landwirtschaft fischerei forstwirtschaft und nahrungsmittel")) %>%
+  mutate(ros = str_detect(groups,"regierung und oeffentlicher sektor")) %>%
+  mutate(rs = str_detect(groups,"regionen und staedte")) %>%
+  mutate(um = str_detect(groups,"umwelt")) %>%
+  mutate(ve = str_detect(groups,"verkehr")) %>%
+  mutate(wf = str_detect(groups,"wirtschaft und finanzen")) %>%
+  mutate(jros = str_detect(groups,"justiz rechtssystem und oeffentliche sicherheit"))
+
+
+full_df <- groups_df %>%
+  rowwise() %>%
+  mutate(gendered = +any(
+    str_detect(c_across(title:tags), "frauen|weiblich|geschlecht"), na.rm = TRUE))
+
+
+
 # reduce dataframe to id and column that should be analyzed
 test_df <- clean_df[,c("id","tags")]
 
