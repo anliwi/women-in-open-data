@@ -97,7 +97,25 @@ fig %>% #plots cummulative n
 
 ##datasets per topic
 
-##is it possible that wissenschaft & technologie has so few datasets?
+# add columns per topic to check whether topic is present in dataset
+groups_df <- df %>%
+  mutate(wt = str_detect(groups,"wissenschaft und technologie")) %>%
+  mutate(gb = str_detect(groups,"bevoelkerung und gesellschaft")) %>%
+  mutate(bks = str_detect(groups,"bildung kultur und sport")) %>%
+  mutate(en = str_detect(groups,"energie")) %>%
+  mutate(ge = str_detect(groups,"gesundheit")) %>%
+  mutate(it = str_detect(groups,"internationale themen")) %>%
+  mutate(lfn = str_detect(groups,"landwirtschaft fischerei forstwirtschaft und nahrungsmittel")) %>%
+  mutate(ros = str_detect(groups,"regierung und oeffentlicher sektor")) %>%
+  mutate(rs = str_detect(groups,"regionen und staedte")) %>%
+  mutate(um = str_detect(groups,"umwelt")) %>%
+  mutate(ve = str_detect(groups,"verkehr")) %>%
+  mutate(wf = str_detect(groups,"wirtschaft und finanzen")) %>%
+  mutate(jros = str_detect(groups,"justiz rechtssystem und oeffentliche sicherheit"))
+  
+# transform logical to numeric
+groups_df[,7:19] <- lapply(groups_df[,7:19], as.numeric)
+
 
 topic <- df %>%
   rowwise() %>%
