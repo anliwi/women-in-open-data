@@ -90,12 +90,8 @@ final_df <- foreach(i = 1:length(json_list), .combine = rbind,.packages = c('htt
   # apply the get_groups function to the reduced json
   groups_list <- lapply(json_groups, get_groups)
   
-  # transform empty values, if there are any, into NA to keep them 
-  groups_list <- lapply(groups_list, lapply, function(x)ifelse(is.null(x), NA, x))
-  
   # create a dataframe of the groups names with the id of the element (needed for matching with other dataframes at the end)
-  df_groups <- plyr::rbind.fill(lapply(groups_list, as.data.frame))
-  df_groups <- tibble::rowid_to_column(df_groups, "id")
+  df_groups <- dplyr::bind_rows(groups_list,.id = "id")
   
   
   ##### GET THE DESCRIPTION #####
@@ -143,7 +139,7 @@ final_df <- foreach(i = 1:length(json_list), .combine = rbind,.packages = c('htt
 registerDoSEQ()
 unregister_dopar()
 
-write.csv(final_df,paste0(getwd(),"/raw_data.csv"), row.names = FALSE)
+write.csv(final_df,paste0(getwd(),"/data/raw_data.csv"), row.names = FALSE)
 
 
 
