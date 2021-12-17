@@ -12,7 +12,7 @@ if (!require("pacman")) install.packages("pacman")
 pacman::p_load(tidyverse,naniar)
 
 # load dataset
-raw_data <- read_csv("raw_data.csv")
+raw_data <- read_csv("data/raw_data.csv")
 
 # replace "character(0)" in tags with NA
 raw_data <- raw_data %>%
@@ -30,5 +30,25 @@ raw_data$tags <- gsub("[)]", "", raw_data$tags)
 clean_df <- raw_data[,2:6]
 clean_df <- tibble::rowid_to_column(clean_df, "id")
 
-write.csv(clean_df,paste0(getwd(),"/clean_data.csv"), row.names = FALSE)
+#removes punctuation, lowercase
+#could use a tweak -- do we remove numbers? do we remove all punctuation apart from hyphen between words?
+
+clean_df <- clean_df %>%
+  mutate(across(
+    .cols = title:tags, .fns = ~ str_replace_all(
+      ., "[[:punct:]](?!\\w)", " ") #removes all punctuation that is not followed by a character
+  )) %>%
+  mutate(across(
+    .cols = title:tags, .fns = ~ str_replace_all(
+      ., '\\"|\\_|\\(', " ") #remove remaining " , _ and (
+  )) %>%
+  mutate(across(
+    .cols = title:tags, .fns = ~ str_squish(.) #removes double whitespace
+  )) %>%
+  mutate(across(
+    .cols = title:tags, .fns = ~ str_to_lower(.)
+  ))
+
+#writes data as csv
+write.csv(clean_df,paste0(getwd(),"/data/clean_data.csv"), row.names = FALSE)
 
