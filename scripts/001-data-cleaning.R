@@ -49,6 +49,28 @@ clean_df <- clean_df %>%
     .cols = title:tags, .fns = ~ str_to_lower(.)
   ))
 
+## transforming german umlaute
+
+clean_df <- clean_df %>%
+  mutate(across(
+    .cols = title:groups, .fns = ~ str_replace_all(
+      ., 'ä', "ae") #replace the ä with ae
+  )) %>%
+  mutate(across(
+    .cols = title:groups, .fns = ~ str_replace_all(
+      ., 'ö', "oe") #replace the ö with oe
+  )) %>%
+  mutate(across(
+    .cols = title:groups, .fns = ~ str_replace_all(
+      ., 'ü', "ue") #replace the ü with ue
+  )) %>%
+  mutate(across(
+    .cols = title:groups, .fns = ~ str_replace_all(
+      ., 'ß', "ss") #replace the ß with ss
+  ))
+
+
+
 #writes data as csv
 write.csv(clean_df,paste0(getwd(),"/data/clean_data.csv"), row.names = FALSE)
 
