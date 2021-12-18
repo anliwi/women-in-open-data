@@ -1,15 +1,62 @@
 ---
 title: "Open Data in  Germany"
 subtitle: "Where are the women?"
-author: "Anna-Lisa Wirth"
+author: "Anna-Lisa Wirth, Dinah Rabe, Helena Bakic"
 date: "18.12.2021"
 output: rmdformats::readthedown
   
 ---
 
-For our final project in Introduction to Data Science we had a great idea. Or so we thought. As all 3 of us are die-hard fans of Caroline Criado-Perez and her book Invisible Women we wanted to replicate her finding on female bone fractures during winter times for the German context. Well, long story short: that did not work out. The end.
 
-No wait. Actually a lot of stuff happened inbetween. On our journey we changed direction a couple of times and still got to some interesting insight. So let us take you along the ride.
+**N.B.: for Simon's requirement on the exec summary and who did what etc I would prefer to put that at the beginning of our method part because I feel it will destroy the article feel of our blog post**
 
-It all started with her:
+# Our journey{.tabset}
+
+For our final project in Introduction to Data Science we had a great idea. Or so we thought. As all 3 of us are die-hard fans of Caroline Criado-Perez and her book *Invisible Women* we wanted to replicate her finding on female bone fractures during winter times in Sweden for the German context. Why that is a thing?! Read the book, dah. Okay, okay, it is because data from Sweden has shown that women suffer more bone fractures in winter than men. This is traced back to men getting from A to B by car while women walk more. Up until these findings it was always roads tha got freed from snow first while sidewalks where neglected. The women on the sidewalk were living dangerous lives compared to the men in the cars. You get the idea. In order to address this issue the Swedish government decided to adapt their snow clearing policy. Sidewalks are now cleared from snow before the roads. Therefore, women's bone fractures in winter reduced dramatically (**Will look up the part in the book and give a bit more precise info tonight**). Cool policy case, right? So we wanted to see how the situation is in Germany.
+Well, long story short: that did not work out. There was no data. The end.
+
+No wait. Actually a lot of stuff happened in between. On our journey we changed direction a couple of times and still got to some interesting insight. So let us take you along the ride.
+
+Btw, it all started with her:
+
+![The first window you see once you run the quiz file. ](https://github.com//anliwi/HolidayMate/blob/main/data/Window_1.jpg?raw=true)
+
+*Caroline*
+
+## On the look for gendered open data
+
+Our conviction is that *open data provided by a government should be inclusive of important societal issues like gender*. SO we started right at ['govdata.de'](https://www.govdata.de/) as it is THE official German open data portal maintained by the national administration. It is a portal that contains links to open data across Germany and thus acts as a gatekeeper to other trustworthy sources of open data. To this end it contains metadata for more than 54000 data sets which can be found by interested individuals. To our dismay our first search results on the platform did not give us our desired data set on bone fractures and actually not much of anything that had to do with gendered data.
+
+## Taking a step back
+
+As our goal of finding open access data about gender for Germany on official government websites led us straight into a data desert or at least Savannah we needed to reconsider. Instead of dropping our feminist motivation nor our commitment to German open data we decided to look at it from a meta-level. So we thought we do a meta-analysis of the existing data sets in the govdata-portal to describe the current status quo and visualize the **gender data gap in German open data**
+
+## The results
+
+xxx
+
+## The Take-away
+
+xxx
+
+# Methodology{.tabset}
+
+## Executive Summary
+
+We did used meta-data in rdf form to analyzre the prevalence of gender in 54517 datasets. In order to this we used term frequency and topic modeling for our analysis.
+
+## Contributions
+
+Idea: Dinah, Helena and Anna
+Analysing the availability and format of data on govdata.de: Dinah and Anna
+Getting the data: Dinah and Helena
+Term frequency analysis: Anna
+Topic modeling: Dinah and Helena
+Visualizing the data: Dinah, Helena and Anna
+Storyline: Dinah, Helena and Anna
+Writing of report: Anna
+
+## What we did:
+
+We started with...
 
