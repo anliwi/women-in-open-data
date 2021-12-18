@@ -1,26 +1,62 @@
 data <- read.csv(choose.files())
 
-head(data)
+#head(data)
 
 library(dplyr)
 
 data_cl <- data %>% 
-  select(-issued) %>% 
-  select(-dataset) %>% 
-  select(-theme)
+  select(-date) %>% 
+  select(-id) %>% 
+  select(-tags)
 #select unique titles
 
-library(topicmodels)
-data_LDA <- LDA(data_cl, k=2, control = list(seed=1234))
-
-
-#titles
-titles <- data_cl %>% 
-  select(title) %>% 
-  sample_n(size=500)
 library(stringr)
 library(stopwords)
 library(tidyverse)
+library(tidyr)
+library(tm)
+
+data_m <- as.matrix(data_cl)
+
+###cleaning data
+
+class(data$groups)
+
+data_v2 <- data %>% 
+  mutate(data$title = replace(data$title, str_detect(data$title, "Ã¤|Ã„"), "ae"))
+  
+  
+ #sample_n(500) %>% 
+ #str_replace_all(pattern = "Ã¼r", replacement = "ue") %>% 
+ #as.data.frame()  
+  
+
+#mutate(food = replace(food, str_detect(food, "fruit"), "fruit"))
+
+
+
+data_join_later <- data$tags %>% 
+  unlist()
+ 
+###
+
+
+#will_d <- data_cl %>% 
+ # summarise(group_by(row_number()))
+
+
+
+library(topicmodels)
+#data_LDA <- LDA(data_m, k=2, control = list(seed=1234))
+#this is still not working and reproducing the same error"Error in !all.equal(x$v, as.integer(x$v)) : invalid argument type
+#In addition: Warning message:
+ # In mode(current) : NAs introduced by coercion
+
+#titles
+titles <- data %>% 
+  select(title) # %>% 
+ # sample_n(size=500)
+
 
 titles <- str_replace_all(titles, "[[:punct:]]", "")
 titles <- tolower(titles)
@@ -39,12 +75,11 @@ titles_sort %>%
   unlist() %>% 
   table() %>% 
   sort(decreasing = TRUE) %>% 
-  head(5)
+  head(10)
 
 #keywords
-keywords <- data_cl %>%
-  select(keyword) %>%
-  sample_n(size=500)
+keywords <- data %>%
+  select(tags)
 
 
 keywords <-  str_replace_all(keywords, "[[:punct:]]", "")

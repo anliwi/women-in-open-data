@@ -1,0 +1,15 @@
+---
+title: "Open Data in  Germany"
+subtitle: "Where are the women?"
+author: "Anna-Lisa Wirth"
+date: "18.12.2021"
+output: rmdformats::readthedown
+  
+---
+
+For our final project in Introduction to Data Science we had a great idea. Or so we thought. As all 3 of us are die-hard fans of Caroline Criado-Perez and her book Invisible Women we wanted to replicate her finding on female bone fractures during winter times for the German context. Well, long story short: that did not work out. The end.
+
+No wait. Actually a lot of stuff happened inbetween. On our journey we changed direction a couple of times and still got to some interesting insight. So let us take you along the ride.
+
+It all started with her:
+
