@@ -117,18 +117,49 @@ groups_df <- df %>%
 groups_df[,7:19] <- lapply(groups_df[,7:19], as.numeric)
 
 
-topic <- df %>%
+gendered_groups <- groups_df %>%
   rowwise() %>%
   mutate(gendered = +any(
-    str_detect(c_across(title:tags), "frauen|weiblich|geschlecht"), na.rm = TRUE)) %>% #looking for keywords in title, description and tags
-  mutate(groups = as.factor(groups),
-         gendered = as.factor(gendered)) %>%
-  group_by(groups, gendered) %>%
+    str_detect(c_across(title:tags), "frauen|weiblich|geschlecht"), na.rm = TRUE)) #%>% #looking for keywords in title, description and tags
+  
+gendered_groups %>%
+  filter(wt == 1) %>%
+  group_by(gendered) %>%
   summarise(n = n()) %>%
   mutate(freq = n / sum(n),
          perc = freq * 100) %>%
-  drop_na() %>%
-  mutate(across(.cols = freq:perc, .fns = ~ round(., 2)))
+  mutate(across(.cols = freq:perc, .fns = ~ round(., 2))) %>%
+  mutate(topic = "wt") %>%
+  relocate(topic)
+
+x <- list()
+for(i in 1:ncol(gendered_groups[,7:19])) {
+  gendered_groups %>%
+    filter(names(gendered_groups[, 6+i]) == 1) %>%
+    group_by(gendered) %>%
+    summarise(n = n()) %>%
+    mutate(freq = n / sum(n),
+           perc = freq * 100) %>%
+    mutate(across(.cols = freq:perc, .fns = ~ round(., 2))) %>%
+    mutate(topic = as.character(names(df[i]))) %>%
+    relocate(topic)
+  #x
+}
+
+
+function (df) {
+  x <- list()
+  for(i in 1:ncol(df[,7:19])) {
+    topics_df <- df %>%
+      filter(df[i] == 1) %>%
+      
+  }
+}
+
+
+
+
+
 
 topic
 
