@@ -3,7 +3,7 @@ Sys.setlocale("LC_ALL", "en_US.UTF-8")
 
 #packages
 if (!require("pacman")) install.packages("pacman")
-pacman::p_load(tidyverse, tidytext, stopwords,foreach, forcats, waffle, gridExtra)
+pacman::p_load(tidyverse, tidytext, stopwords,foreach, forcats, waffle, gridExtra, directlabels)
 
 df <- read.csv("data/clean_data.csv")
 
@@ -25,16 +25,12 @@ total
 
 #waffle plot, total percentage of plots
 
-p1 <- c(94, 6)
-p <- waffle(p1, rows = 10,
+total <- c(94, 6)
+waffle(total, rows = 10,
        colors = c("#808080", "#FF69B4"),
        title = "Percentage of gendered vs non gendered datasets",
        legend_pos = "none")
-p2 <- waffle(p1, rows = 10,
-            colors = c("#808080", "#FF69B4"),
-            title = "Percentage of gendered vs non gendered datasets",
-            legend_pos = "none")
-xy <- grid.arrange(p, p2, p2, ncol = 3)
+
 
 ####data sets per year -- with and without gender
 
@@ -44,22 +40,65 @@ year <- df %>%
   rowwise() %>%
   mutate(gendered = +any(
     str_detect(c_across(title:tags), "frauen|weiblich|geschlecht"), na.rm = TRUE)) %>% #looking for keywords in title, description and tags
+  mutate(gendered = as.factor(gendered)) %>%
   group_by(gendered, year = lubridate::year(date)) %>%
   summarise(n = n()) %>%
   mutate(freq = prop.table(n),
          perc = freq * 100,
-         cum_perc = cumsum(perc)) %>%
+         cum_sum = cumsum(n),
+         cum_sum_00 = cum_sum/1000) %>% #cummulative sum in thousands
+  mutate(across(where(is.numeric), round, 2))
+
+perc <- df %>%
+  rowwise() %>%
+  mutate(gendered = +any(
+    str_detect(c_across(title:tags), "frauen|weiblich|geschlecht"), na.rm = TRUE)) %>% #looking for keywords in title, description and tags
+  mutate(gendered = as.factor(gendered)) %>%
+  group_by(year = lubridate::year(date), gendered) %>%
+  summarise(n = n()) %>%
+  mutate(freq = prop.table(n),
+         perc = freq * 100,
+         cum_sum = cumsum(n)) %>%
   round(2)
 
 
-year %>%
-  ggplot(aes(x = year, y = cum_perc, colour = gendered)) +
-  geom_point(aes(color = factor(gendered)), shape = "o", size = 2) +
+p1 <- year %>%
+  mutate(gendered = ifelse(gendered == 1, "Gendered", "Not gendered")) %>%
+  ggplot(aes(x = year, y = cum_sum_00, colour = gendered)) +
+  geom_point(aes(color = gendered), shape = 15, size = 3) +
   scale_x_continuous(breaks = seq(2013, 2021, 1)) +
-  geom_line(aes(color = factor(gendered))) +
-  labs(title = "Cummulative percentage of gendered and non-gendered data sets per year",
-       y = "cummulative percentage") +
-  theme_minimal()
+  geom_line(aes(color = gendered)) +
+  annotate(geom="text", x=2020.5, y=9, label="Gendered",
+           color="#FF69B4") +
+  annotate(geom="text", x=2019.2, y=20, label="Not gendered",
+           color="#808080") +
+  scale_color_manual(values = c("#FF69B4", "#808080")) +
+  labs(title = "Cummulative frequency of gendered and non-gendered data sets per year",
+       y = "Cummulative frequency (thousands)",
+       x = "") +
+  theme_minimal() +
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+
+
+p2<- perc %>%
+  mutate(gendered = ifelse(gendered == 1, "Gen", "Nge")) %>%
+  ggplot(aes(x = year, y = fct_reorder(gendered, desc(perc)))) +
+  geom_point(aes(color = gendered, size = perc), shape = 15) +
+  scale_x_continuous(breaks = seq(2013, 2021, 1)) +
+  scale_size(range = c(.1, 24), name="Percentage") +
+  scale_color_manual(values = c("#FF69B4", "#808080")) +
+  #geom_line(aes(color = factor(gendered))) +
+  labs(title = "Percentage of gendered and non-gendered data sets per year",
+       y = "Percent",
+       x="") +
+  theme_minimal() +
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank())
+
+fig1 <- grid.arrange(p1, p2, ncol = 1)
+
 
 #gendered and total
 
