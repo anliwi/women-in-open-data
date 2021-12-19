@@ -3,7 +3,7 @@ Sys.setlocale("LC_ALL", "en_US.UTF-8")
 
 #packages
 if (!require("pacman")) install.packages("pacman")
-pacman::p_load(tidyverse, tidytext, stopwords,foreach, forcats, waffle, gridExtra, directlabels)
+pacman::p_load(tidyverse, tidytext, stopwords,foreach, forcats, waffle, gridExtra, directlabels, grid, ggrepel)
 
 df <- read.csv("data/clean_data.csv")
 
@@ -46,20 +46,31 @@ year <- df %>%
   mutate(freq = prop.table(n),
          perc = freq * 100,
          cum_sum = cumsum(n),
-         cum_sum_00 = cum_sum/1000) %>% #cummulative sum in thousands
+         cum_sum_00 = cum_sum/1000,
+         cum_perc = cum_sum/n *100) %>% #cummulative sum in thousands
   mutate(across(where(is.numeric), round, 2))
+
 
 perc <- df %>%
   rowwise() %>%
   mutate(gendered = +any(
     str_detect(c_across(title:tags), "frauen|weiblich|geschlecht"), na.rm = TRUE)) %>% #looking for keywords in title, description and tags
   mutate(gendered = as.factor(gendered)) %>%
-  group_by(year = lubridate::year(date), gendered) %>%
+  group_by(year = lubridate::year(date)) %>%
+  mutate(n_year = n()) %>%
+  ungroup() %>%
+  group_by(gendered, year, n_year) %>%
   summarise(n = n()) %>%
-  mutate(freq = prop.table(n),
-         perc = freq * 100,
-         cum_sum = cumsum(n)) %>%
-  round(2)
+  ungroup()%>%
+  complete(year, nesting(gendered), fill = list(n = 0)) %>% #completes the missing years for gendered
+  fill(n_year) %>% #fills year from top to bottom
+  ungroup() %>%
+  group_by(gendered) %>%
+  mutate(cum_n = cumsum(n),
+         cum_year = cumsum(n_year),
+         cum_perc = cum_n / cum_year * 100) %>%
+  mutate(across(where(is.numeric), round, 2))
+
 
 
 p1 <- year %>%
@@ -70,32 +81,38 @@ p1 <- year %>%
   geom_line(aes(color = gendered)) +
   annotate(geom="text", x=2020.5, y=9, label="Gendered",
            color="#FF69B4") +
-  annotate(geom="text", x=2019.2, y=20, label="Not gendered",
+  annotate(geom="text", x=2019.2, y=20, label="Non-gendered",
            color="#808080") +
   scale_color_manual(values = c("#FF69B4", "#808080")) +
-  labs(title = "Cummulative frequency of gendered and non-gendered data sets per year",
+  labs(title = "Cumulative number of gendered and non-gendered data sets per year",
        y = "Cummulative frequency (thousands)",
        x = "") +
   theme_minimal() +
+  geom_hline(yintercept = 0) +
   theme(legend.position = "none",
-        panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank())
 
+
+grob <- grobTree(textGrob("27%", x=0.08,  y=0.76, hjust=0,
+                          gp=gpar(col="#808080", fontsize=8)))
 
 p2<- perc %>%
   mutate(gendered = ifelse(gendered == 1, "Gen", "Nge")) %>%
-  ggplot(aes(x = year, y = fct_reorder(gendered, desc(perc)))) +
-  geom_point(aes(color = gendered, size = perc), shape = 15) +
+  ggplot(aes(x = year, y = fct_reorder(gendered, desc(cum_perc)))) +
+  geom_point(aes(color = gendered, size = cum_perc), shape = 15) +
   scale_x_continuous(breaks = seq(2013, 2021, 1)) +
-  scale_size(range = c(.1, 24), name="Percentage") +
+  scale_size(range = c(.1, 24)) +
   scale_color_manual(values = c("#FF69B4", "#808080")) +
-  #geom_line(aes(color = factor(gendered))) +
-  labs(title = "Percentage of gendered and non-gendered data sets per year",
+  labs(title = "Ratio of gendered and non-gendered data sets per year",
        y = "Percent",
        x="") +
   theme_minimal() +
   theme(legend.position = "none",
         panel.grid.major = element_blank(), 
-        panel.grid.minor = element_blank())
+        panel.grid.minor = element_blank(),
+        axis.title.y=element_text(colour="white"),
+        axis.text.y=element_text(colour="white")) 
 
 fig1 <- grid.arrange(p1, p2, ncol = 1)
 
