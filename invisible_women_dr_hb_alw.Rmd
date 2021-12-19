@@ -7,11 +7,6 @@ output: rmdformats::readthedown
   
 ---
 
-
-**N.B.: for Simon's requirement on the exec summary and who did what etc I would prefer to put that at the beginning of our method part because I feel it will destroy the article feel of our blog post**
-
-# Our journey
-
 For our final project in Introduction to Data Science we had a great idea. Or so we thought. As all 3 of us are die-hard fans of Caroline Criado-Perez and her book *Invisible Women* we wanted to replicate her finding on female bone fractures during winter times in Sweden for the German context. Why that is a thing?! Read the book, dah. Okay, okay, it is because data from Sweden has shown that women suffer more bone fractures in winter than men. This is traced back to men getting from A to B by car while women walk more. Up until these findings it was always roads tha got freed from snow first while sidewalks where neglected. The women on the sidewalk were living dangerous lives compared to the men in the cars. You get the idea. In order to address this issue the Swedish government decided to adapt their snow clearing policy. Sidewalks are now cleared from snow before the roads. Therefore, women's bone fractures in winter reduced dramatically (**Will look up the part in the book and give a bit more precise info tonight**). Cool policy case, right? So we wanted to see how the situation is in Germany.
 Well, long story short: that did not work out. There was no data. The end.
 
@@ -19,7 +14,7 @@ No wait. Actually, a lot of stuff happened in between. On our journey we changed
 
 Btw, it all started with her:
 
-![Caroline](data-project-invisible_women/httpswww.expressandstar.comnewsscience-and-technology20190923feminist-author-caroline-criado-perez-brexit-is-bad-for-women.webp)
+![Caroline](httpswww.expressandstar.comnewsscience-and-technology20190923feminist-author-caroline-criado-perez-brexit-is-bad-for-women.webp)
 
 ## On the look for gendered open data
 
@@ -31,7 +26,6 @@ As our goal of finding open access data about gender for Germany on official gov
 
 ## The results
 
-xxx
 As we were sifting through the metadata provided, we found quite some interesting facts. For instance, only about a 10th of the data is even marked as concerning gender. Gendered data sets were only added in the last 4 years.
 
 Unsurprisingly the data sets that are connected to women have a caring connotation.
@@ -44,22 +38,32 @@ Well, huh, tough one. We are aware that open data in and of itself is a great id
 
 # Methodology Report{.tabset}
 
-## Executive Summary
-
-We did used meta-data in rdf form to analyzre the prevalence of gender in 54517 datasets. In order to this we used term frequency and topic modeling for our analysis.
-
 ## Contributions
 
-Idea: Dinah, Helena and Anna
-Analysing the availability and format of data on govdata.de: Dinah and Anna
-Getting the data: Dinah and Helena
-Term frequency analysis: Anna
-Topic modeling: Dinah and Helena
-Visualizing the data: Dinah, Helena and Anna
-Storyline: Dinah, Helena and Anna
-Writing of report: Anna
+**Individual contributors**
+
+* Dinah Rabe(xxx)
+
+* Helena Bakic(xxx)
+
+* Anna-Lisa Wirth (213286(at)mds.hertie-school.org)
+
+**Parts**
+
+1) Idea: Dinah Rabe, Helena Bakic and Anna-Lisa Wirth
+
+2) Data search and collection: Dinah Rabe, Helena Bakic and Anna-Lisa Wirth
+
+3) Data analysis: Dinah Rabe, Helena Bakic and Anna-Lisa Wirth
+
+4) Storyline and report: Dinah Rabe, Helena Bakic and Anna-Lisa Wirth
+
+## Executive Summary
+
+We did used metadata in rdf form to analyzre the prevalence of gender in 54517 datasets. In order to this we used term frequency and topic modeling (LDA) for our analysis.
+
 
 ## What we did:
 
-We started with...
+We started with our search for open data. We considered several data sources however settled for ['govdata.de'](https://www.govdata.de/)as it acts as a gatekeeper with its collection of links and metadata about German public administration datasets. 
 
