@@ -3,7 +3,7 @@ Sys.setlocale("LC_ALL", "en_US.UTF-8")
 
 #packages
 if (!require("pacman")) install.packages("pacman")
-pacman::p_load(tidyverse, tidytext, stopwords)
+pacman::p_load(tidyverse, tidytext, stopwords,foreach, forcats, waffle, gridExtra)
 
 df <- read.csv("data/clean_data.csv")
 
@@ -22,6 +22,19 @@ total <- df %>%
   round(2)
 
 total
+
+#waffle plot, total percentage of plots
+
+p1 <- c(94, 6)
+p <- waffle(p1, rows = 10,
+       colors = c("#808080", "#FF69B4"),
+       title = "Percentage of gendered vs non gendered datasets",
+       legend_pos = "none")
+p2 <- waffle(p1, rows = 10,
+            colors = c("#808080", "#FF69B4"),
+            title = "Percentage of gendered vs non gendered datasets",
+            legend_pos = "none")
+xy <- grid.arrange(p, p2, p2, ncol = 3)
 
 ####data sets per year -- with and without gender
 
@@ -116,103 +129,131 @@ groups_df <- df %>%
 # transform logical to numeric
 groups_df[,7:19] <- lapply(groups_df[,7:19], as.numeric)
 
-
+#data set containg a variable "gendered" that shows wheather or not the dataset has gender
 gendered_groups <- groups_df %>%
   rowwise() %>%
   mutate(gendered = +any(
-    str_detect(c_across(title:tags), "frauen|weiblich|geschlecht"), na.rm = TRUE)) #%>% #looking for keywords in title, description and tags
-  
-gendered_groups %>%
-  filter(wt == 1) %>%
-  group_by(gendered) %>%
-  summarise(n = n()) %>%
-  mutate(freq = n / sum(n),
-         perc = freq * 100) %>%
-  mutate(across(.cols = freq:perc, .fns = ~ round(., 2))) %>%
-  mutate(topic = "wt") %>%
-  relocate(topic)
+    str_detect(c_across(title:tags), "frauen|weiblich|geschlecht"), na.rm = TRUE)) %>% #looking for keywords in title, description and tags
+  ungroup()
 
-x <- list()
-for(i in 1:ncol(gendered_groups[,7:19])) {
+#extracting topics for gender  
+gendered_topics <- foreach(i = 1:ncol(gendered_groups[,7:19]), .combine = rbind) %do% {
   gendered_groups %>%
-    filter(names(gendered_groups[, 6+i]) == 1) %>%
+    filter(!!as.symbol(names(gendered_groups[, 6+i])) == 1) %>%
     group_by(gendered) %>%
     summarise(n = n()) %>%
     mutate(freq = n / sum(n),
            perc = freq * 100) %>%
     mutate(across(.cols = freq:perc, .fns = ~ round(., 2))) %>%
-    mutate(topic = as.character(names(df[i]))) %>%
+    mutate(topic = names(gendered_groups[, 6+i])) %>%
     relocate(topic)
-  #x
+}
+
+gendered_topics
+
+list <- gendered_topics %>% filter(gendered == 1) %>% arrange(desc(perc)) %>% pull(topic) #ordered list of topics by perc in gedered datasets
+
+x <- list()
+
+rm(i)
+for (i in 1:length(list)) {
+  perc <- gendered_topics %>%
+    filter(topic == list[i]) %>%
+    pull(perc) %>%
+    round(0)
+  x[[i]] <- perc
+#assign(list[i], x)
 }
 
 
-function (df) {
-  x <- list()
-  for(i in 1:ncol(df[,7:19])) {
-    topics_df <- df %>%
-      filter(df[i] == 1) %>%
-      
-  }
+#order a list
+#x[order(sapply(x, function(x) x[1], simplify=TRUE), decreasing=TRUE)]
+
+rm(i)
+for (i in 1:length(x)){
+  name = paste0("w", i)
+  chart <- waffle(x[[i]], rows = 10,
+                 colors = c("#808080", "#8a0303"),
+                 title = list[i],
+                 legend_pos = "none")
+  assign(name, chart)
 }
 
+chart_names <- paste0("w", seq(1, 13, 1))
+
+fig_1 <- grid.arrange(w1, w2, w3, w4, ncol = 4)
+fig_2 <- grid.arrange(w5, w6, w7, w8, ncol = 4)
+fig_3 <- grid.arrange(w9, w10, w11, w12, ncol = 4)
+
+fig2 <- grid.arrange(fig_1, fig_2, fig_3,
+                     top = textGrob("Percent of gendred datasets per topic",
+                                    x = 0,
+                                    just = "left",
+                                    gp = gpar(fontsize = 18)))
 
 
+##gendered_topics %>%
+##  ggplot(aes(fill = gendered, y = perc, x = topic)) + 
+##  geom_bar(position="stack", stat="identity") +
+##  coord_flip()
 
 
-
-topic
-
-
-ggplot(topic, aes(fill=gendered, order=gendered, y=perc, x=groups)) + 
-  geom_bar(position="stack", stat="identity") +
-  coord_flip()
 
 ##words that separate topics
 
 #which topic are most common
 
-topic %>%
-  filter(gendered == 1 & n >= 300) 
+gendered_topics %>%
+  filter(gendered == 1) %>%
+  arrange(desc(perc))
 
 #importing german stop words
 stop_german <- data.frame(word = stopwords::stopwords("de"), stringsAsFactors = FALSE)
 
+#cleaning dataset for topic models - removing gendered words, as we know that these separate the groups and removing numbers
+topic_analysis <- gendered_groups %>%
+  mutate(description = str_remove_all(description, "frauen|weiblich|geschlecht")) %>%
+  mutate(description = str_remove_all(description, "[:digit:]"))
+    
 
-#tidy text data frame
-tidy_description <-
-  df %>%
-  filter(groups == "Bevölkerung und Gesellschaft") %>%
-  rowwise() %>%
-  mutate(gendered = +any(
-    str_detect(c_across(title:tags), "frauen|weiblich|geschlecht"), na.rm = TRUE)) %>%
-  mutate(gendered = as.factor(gendered)) %>%
-  ungroup() %>%
-  #select(id, groups, gendered, description) %>%
-  unnest_tokens(word, description) %>%
-  count(gendered, word, sort = TRUE)
+##getting a dataframe with words that distinguish gendered and non gendered datasets per most common topics 
 
-#removing stop words
-tidy_description_stop <- tidy_description %>%
-  anti_join(stop_german)
+list <- c("ge", "jros", "gb", "wt") #character vector of topics to extract
 
-#getting tf_idf scores
-description_tf_idf <- tidy_description_stop %>%
-  bind_tf_idf(word, gendered, n)
+gendered_words <- foreach(i = 1:length(list), .combine = rbind) %do% {
+  topic_analysis %>%
+    filter(!!as.symbol(list[i]) == 1) %>% #filters for topic
+    mutate(gendered = as.factor(gendered)) %>%
+    unnest_tokens(word, description) %>% #unnesting words in descriptions
+    count(gendered, word, sort = TRUE) %>% #counts word frequencies
+    anti_join(stop_german) %>% #removes stop words
+    bind_tf_idf(word, gendered, n) %>% #applies tf_idf function to calculate distinctiveness of words
+    mutate(topic = list[i]) %>% #adds a column with topic name
+    relocate(topic) #moves topic column to the front
+} 
 
-#plot -- need to take out gendered words from gendered data-sets, and probably numbers from others???
-library(forcats)
-
-description_tf_idf %>%
+# to chart each group individually
+gendered_words %>%
+  filter(topic == "wt") %>% #filters for topic
   group_by(gendered) %>%
-  slice_max(tf_idf, n = 15) %>%
+  slice_max(tf_idf, n = 15) %>% #gets the 15 most distinctive words
   ungroup() %>%
   ggplot(aes(tf_idf, fct_reorder(word, tf_idf), fill = gendered)) +
   geom_col(show.legend = FALSE) +
-  facet_wrap(~gendered, ncol = 2, scales = "free") +
+  facet_wrap(~topic + gendered, ncol = 2, scales = "free") +
   labs(x = "tf-idf", y = NULL)
 
 
+############WORD PFLEGE IN GENDERED AND NON GENDERED DATASETS (TOPIC == HEALT)
 
+gendered_groups %>%
+  mutate(gendered = as.factor(gendered)) %>%
+  filter(ge == 1) %>%
+  mutate(word = as.numeric(str_detect(description, "pflege"))) %>%
+  drop_na(word) %>%
+  group_by(gendered, word) %>%
+  summarise(n = n()) %>%
+  mutate(freq = prop.table(n),
+         perc = freq * 100) 
 
 
