@@ -1,8 +1,8 @@
 ---
 title: "Open Data in  Germany"
-subtitle: "Where are the women?"
+subtitle: "Where are the WOMEN?"
 author: "Anna-Lisa Wirth, Dinah Rabe, Helena Bakic"
-date: "18.12.2021"
+date: "12/19/2021"
 output: rmdformats::readthedown
   
 ---
@@ -10,18 +10,16 @@ output: rmdformats::readthedown
 
 **N.B.: for Simon's requirement on the exec summary and who did what etc I would prefer to put that at the beginning of our method part because I feel it will destroy the article feel of our blog post**
 
-# Our journey{.tabset}
+# Our journey
 
 For our final project in Introduction to Data Science we had a great idea. Or so we thought. As all 3 of us are die-hard fans of Caroline Criado-Perez and her book *Invisible Women* we wanted to replicate her finding on female bone fractures during winter times in Sweden for the German context. Why that is a thing?! Read the book, dah. Okay, okay, it is because data from Sweden has shown that women suffer more bone fractures in winter than men. This is traced back to men getting from A to B by car while women walk more. Up until these findings it was always roads tha got freed from snow first while sidewalks where neglected. The women on the sidewalk were living dangerous lives compared to the men in the cars. You get the idea. In order to address this issue the Swedish government decided to adapt their snow clearing policy. Sidewalks are now cleared from snow before the roads. Therefore, women's bone fractures in winter reduced dramatically (**Will look up the part in the book and give a bit more precise info tonight**). Cool policy case, right? So we wanted to see how the situation is in Germany.
 Well, long story short: that did not work out. There was no data. The end.
 
-No wait. Actually a lot of stuff happened in between. On our journey we changed direction a couple of times and still got to some interesting insight. So let us take you along the ride.
+No wait. Actually, a lot of stuff happened in between. On our journey we changed direction a couple of times and still got to some interesting insight. So let us take you along the ride.
 
 Btw, it all started with her:
 
-![The first window you see once you run the quiz file. ](https://github.com//anliwi/HolidayMate/blob/main/data/Window_1.jpg?raw=true)
-
-*Caroline*
+![Caroline](data-project-invisible_women/httpswww.expressandstar.comnewsscience-and-technology20190923feminist-author-caroline-criado-perez-brexit-is-bad-for-women.webp)
 
 ## On the look for gendered open data
 
@@ -34,12 +32,17 @@ As our goal of finding open access data about gender for Germany on official gov
 ## The results
 
 xxx
+As we were sifting through the metadata provided, we found quite some interesting facts. For instance, only about a 10th of the data is even marked as concerning gender. Gendered data sets were only added in the last 4 years.
+
+Unsurprisingly the data sets that are connected to women have a caring connotation.
+
+There are x topics in the data sets with gendered data only being present in x of them: xx names xx
 
 ## The Take-away
 
-xxx
+Well, huh, tough one. We are aware that open data in and of itself is a great ideal that is - at least in the German context - still learning to walk. It carries great promise but is not quite there yet. This is why we would clearly state at this point of it amazing it is that his project is even developed by the German administration. However, this is not a reason for us to hold it to high standards it does not fulfill yet. As we struggled to find data sets that were interesting for our research interest one must realize that the open data sets are not very diverse and more treating specific subject areas. We hope that this will change in the upcoming years so that we can actually do research into gender with open data sets. For the time being we just wanted to share this - priorities first,ey:
 
-# Methodology{.tabset}
+# Methodology Report{.tabset}
 
 ## Executive Summary
 
