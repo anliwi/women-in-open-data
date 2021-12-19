@@ -7,8 +7,10 @@ output: rmdformats::readthedown
   
 ---
 
-For our final project in Introduction to Data Science we had a great idea. Or so we thought. As all 3 of us are die-hard fans of Caroline Criado-Perez and her book *Invisible Women* we wanted to replicate her finding on female bone fractures during winter times in Sweden for the German context. Why that is a thing?! Read the book, dah. Okay, okay, it is because data from Sweden has shown that women suffer more bone fractures in winter than men. This is traced back to men getting from A to B by car while women walk more. Up until these findings it was always roads tha got freed from snow first while sidewalks where neglected. The women on the sidewalk were living dangerous lives compared to the men in the cars. You get the idea. In order to address this issue the Swedish government decided to adapt their snow clearing policy. Sidewalks are now cleared from snow before the roads. Therefore, women's bone fractures in winter reduced dramatically (**Will look up the part in the book and give a bit more precise info tonight**). Cool policy case, right? So we wanted to see how the situation is in Germany.
-Well, long story short: that did not work out. There was no data. The end.
+For our final project in the course Introduction to Data Science at Hertie School in Berlin we had a great idea. Or at least we thought so. As all three of us (Dinah, Helena and Anna-Lisa) are die-hard fans of Caroline Criado-Perez and her book *Invisible Women* we wanted to replicate her finding on female bone fractures during winter times in Sweden for the German context. Why that is a thing?! Read the book, dah. 
+
+Okay, okay, it is because data from Sweden has shown that during winter women suffer more bone fractures than men. This is traced back to different commuting behavior of men and women: Getting from A to B men more commonly use the car while women walk more. Before discovering this difference, this led to roads always being cleared from snow first during winter times while sidewalks were deprioritized. The women on the sidewalk were living dangerous lives compared to the men in cars. You get the idea.After discovering the connection between different commuting behaviour and bone fractures.  Therefore, women's bone fractures in winter were cut in half according to local policy makers. Cool policy case, right? So we wanted to see how the situation is in Germany.
+Well, long story short: that did not work out. We couldn't find any usable data. The end.
 
 No wait. Actually, a lot of stuff happened in between. On our journey we changed direction a couple of times and still got to some interesting insight. So let us take you along the ride.
 
@@ -17,23 +19,68 @@ Btw, it all started with her:
 
 ## On the look for gendered open data
 
-Our conviction is that *open data provided by a government should be inclusive of important societal issues like gender*. SO we started right at ['govdata.de'](https://www.govdata.de/) as it is THE official German open data portal maintained by the national administration. It is a portal that contains links to open data across Germany and thus acts as a gatekeeper to other trustworthy sources of open data. To this end it contains metadata for more than 54000 data sets which can be found by interested individuals. To our dismay our first search results on the platform did not give us our desired data set on bone fractures and actually not much of anything that had to do with gendered data.
+Our conviction is that *open data provided by a government should be inclusive of important societal issues like gender*. SO we started right at ['govdata.de'](https://www.govdata.de/) as it is THE official German open data portal maintained by the national administration. It is a portal that contains links to open data across Germany and thus acts as a gatekeeper to other trustworthy sources of open data. To this end it contains metadata (basically data about data) for more than 54000 data sets which can be found by interested individuals. To our dismay our first search results on the platform did not give us our desired data set on bone fractures or commuting behaviour for the city of Berlin. We decided to let go of our beloved snow example and broadened our search for any gendered datasets. We searched in titles, topics and keywords for any hints of gender – and we had to realize: there are just barely any datasets at all which contain a variable for gender.
 
-## Taking a step back
+## Taking a step back: redefining the goal
 
-As our goal of finding open access data about gender for Germany on official government websites led us straight into a data desert or at least Savannah we needed to reconsider. Instead of dropping our feminist motivation nor our commitment to German open data we decided to look at it from a meta-level. So we thought we do a meta-analysis of the existing data sets in the govdata-portal to describe the current status quo and visualize the **gender data gap in German open data**
+As our goal of finding open access data about gender for Germany on official government websites led us straight into a data desert or at least Savannah we needed to reconsider our project goal. Instead of dropping our feminist motivation or our commitment to German open data we decided to look at it from a meta-level. As the govdata-portal provides standardized metadata for its datasets, we decided to do a meta-analysis of the existing datasets on the govdata-portal to describe and visualize the gender gap in the German open government data. 
 
-## The results
+## Our Findings
 
-As we were sifting through the metadata provided, we found quite some interesting facts. For instance, only about a 10th of the data is even marked as concerning gender. Gendered data sets were only added in the last 4 years.
+As we were sifting through the metadata provided, we found quite some interesting facts. For instance, only about a 10th of the data is even marked as concerning gender. Gendered data sets were only added in the last 6 years. As you can see in the figure below they have been added in different amounts each year. Overall, the data sets available on opengov.de went through the roof over the last 2 years. One can't say the same about gendered data.
 
-Unsurprisingly the data sets that are connected to women have a caring connotation.
+![Figure 1](./outputs/datasets-yearly.PNG)
 
-There are x topics in the data sets with gendered data only being present in x of them: xx names xx
+Now, as we have seen the overall amount let's see if we can narrow down where the gendered data is. In order to do this we sneaked into the topics within the metadata:
+
+![Figure 2](./outputs/datasets-topics.PNG)
+
+As you can see there are 12 topics within the datasets. One dataset can be assigned several topics. Gendered datasets only show up in 7 topics: Health, Justice, Society,Science, Education and Government.
+Unsurprisingly the data sets that are connected to women have a caring connotation. As we said several topics can be assigned to the same dataset. So, instead of stopping there we continued with our own topic models with the help of the LDA algorithm. This algorithm(it is like an elaborate instruction for the computer on what to do)- the LDA (latent dirichlet allocation is a generative statistical model that allows sets of observations to be explained by grouping them through computation)- is used to find the most important groups (topics)of words. Thus, the name: topic modeling.
+
+We hand-selected three topics each, once for the general health dataset and once for a selected health dataset  that had to contain gender.
+
+
+```{r echo=FALSE, message=FALSE,warning=FALSE}
+
+library(dplyr)
+library(tidyverse)
+table1_df <- read_csv("outputs/table_1_gender_ges.csv")
+table2_df <- read_csv("outputs/table_2_nongender_ges.csv")
+
+library(kableExtra)
+  
+# visualize datasets that contain gender
+table1 <- table1_df %>%
+  kbl() %>%
+  kable_minimal(bootstrap_options = "condensed",font_size = 10, full_width = FALSE) %>%
+  add_header_above(c("Selection out of Ten: Topics Modelled \n for the Healh Datasets That Include Gender" = 3), color = "#808080") %>%
+  row_spec(0,color = "#fefaf6") %>%
+  row_spec(c(1:10),color = "#808080") 
+
+
+# visualize datasets that not contain gender
+table2 <- table2_df %>%
+  kbl() %>%
+  kable_minimal(bootstrap_options = "condensed",font_size = 10, full_width = FALSE) %>%
+  add_header_above(c("Selection out of Ten: Topics Modelled \n for the Healh Datasets That Do Not Include Gender" = 3), color = "#808080") %>%
+  row_spec(c(0:10),color = "#808080")
+
+table1
+table2
+
+```
+
+If you do not speak German you might want to check out our translations at the bottom of the article. We opted to not take the beauty of German words away from you though. On a serious note: what you see is that the second topic for gendered is about caring and help. Covid however does not show up in gendered data but seems to only have been counted on mere case numbers as this only shows up in the generalized dataset.
+
 
 ## The Take-away
 
-Well, huh, tough one. We are aware that open data in and of itself is a great ideal that is - at least in the German context - still learning to walk. It carries great promise but is not quite there yet. This is why we would clearly state at this point of it amazing it is that his project is even developed by the German administration. However, this is not a reason for us to hold it to high standards it does not fulfill yet. As we struggled to find data sets that were interesting for our research interest one must realize that the open data sets are not very diverse and more treating specific subject areas. We hope that this will change in the upcoming years so that we can actually do research into gender with open data sets. For the time being we just wanted to share this - priorities first,ey:
+Well, huh, tough one. We are aware that open data in and of itself is a great ideal that is - at least in the German context - still learning to walk. It carries great promise but is not quite there yet. This is why we would clearly state at this point of it amazing it is that this project is even developed by the German administration. However, this is not a reason for us to hold it to high standards it does not fulfill yet. As we struggled to find data sets that were interesting for our research interest one must realize that the open data sets are not very diverse and more treating specific subject areas. We hope that this will change in the upcoming years so that we can actually do research into gender with open data sets. Let's see whether it will be easier to find the women. For the time being we just wanted to share this - priorities first,ey:
+
+![Figure 5](./outputs/tf_plot.PNG)
+
+So, there you are. That was the hopefully nice-enough-to-read article about our project. In case you just can't get enough we prepared a report about our methodology and translations for the funny German words below. Knock yourself out.
 
 # Methodology Report{.tabset}
 
@@ -55,11 +102,13 @@ Well, huh, tough one. We are aware that open data in and of itself is a great id
 
 3) Data analysis: Dinah Rabe, Helena Bakic and Anna-Lisa Wirth
 
-4) Storyline and report: Dinah Rabe, Helena Bakic and Anna-Lisa Wirth
+4) Data visualization:Dinah Rabe, Helena Bakic and Anna-Lisa Wirth
+
+5) Storyline and report: Dinah Rabe, Helena Bakic and Anna-Lisa Wirth
 
 ## Executive Summary
 
-We did used metadata in rdf form to analyzre the prevalence of gender in 54517 datasets. In order to this we used term frequency and topic modeling (LDA) for our analysis.
+We used metadata in rdf form to analyze the prevalence of gender in 54517 datasets from opengov.de. The data was retrieved through an API and cleaned. For the analysis different part sof the dataset were subset in order to filter for gendered data. Four different data analysis approaches were performed: calculating the percentage for the overall datsets and gendered data there of and comparing on an annual basis,filtering the amount of gendered and none gendered datasets per topic, unsupervised topic modeling with LDA on the keywords, term frequency analysis on the keywords. We found that gendered datasets only make up a small amount (~10 percent)of overall datasets and are confined to 7 out of 12 topics. Furthermore, the most prevalent data appears to be treating construction and traffic. There is still a considerable gender data gap on this portal.
 
 
 ## What we did:
@@ -77,3 +126,76 @@ DINAH; CAN YOU ADD ON DATA CLEANING; YOU DID SOME BITS THERE
 
 To analyse the gender data gap, we have compared the data sets that include gender as an information to those who do not. We defined the "gendered" data sets as the ones whose metadata mention "gender", "women" or "female" in either title, description or keywords. It is possible that this strategy omitted some gendered data sets (and included some that are less than meaningful); however, as data depositors know their data best, it is likely a good approximation of whether or not the data set has data split by gender. We then compared the total number of gendered and non-gendered data sets per year and per topic. DINAH; WILL YOU ADD TOPIC MODELS HERE?
 
+The term frequency modelling was done on the tabs column of the data set as these represent deliberately assigned keywords. The 100 most frequent terms were determined. For illustrative purposes the 10 selected terms fell in either of three categories 1)terms more prevalent than gender which were deemed to be culturally telling for German datasets (7 terms) 2)two terms that were associated with gender - "geschlecht" and "weiblich" 3) as well as the term "covid19" due to its importance in the current pandemic (at the time of writing this article). The horizontal bars for the term have a length proportional to their prevalence (between 796 for "covid19" to 6284 for "bebauungsplan") and are ordered from most to least prevalent out of the selection. The general dataset was used during this process.
+
+## Topic models - translation
+
+Translations for Table X
+
+de = short for german
+einwohner = inhabitant
+pro = per
+kreises = (of the) district
+schwerpunkte = focus areas
+kreis = district
+kleve = city of kleve
+anzahl = quantity
+aachen = city of Aachen
+apotheken = pharmacies
+staedteregion = cities region
+personen = people
+verzeichnis = register
+liste = list
+wesel = city of wesel
+daten = data
+ueber = of
+haftung = liability
+laermbelastung = noise exposure
+laermkartierung = noise mapping
+ballungsraeumen = metropolitan areas
+kartiert = mapped 
+strategischen = strategic
+datensatz = dataset
+
+Translations for Table Y
+zahlen = numbers
+faelle = cases
+gemeldete(n) = registered
+daten = data
+kommunizierten = communicated
+felder = fields
+feldtrenner = field separator
+datensatz = dataset
+pflege = care/nursing
+eigene = own
+wohnen = living
+zufriedenheit = satisfaction
+wohnsituation = living situation
+hilfe = help
+erfahrungen = experiences
+beratung = consultation
+folgenden = following
+kreise = districts
+staedte = cities
+kreisfreien = district-free
+maennlich = male
+ausgewaehlten = selected
+jahr = year
+todesursachen = causes of death
+fachabteilungen = specialist departments
+gestorbene = died
+regionale = regional
+
+
+## Term frequency translation
+
+bebauungsplan - construction plan
+scharbeutz - random place in Germany
+futtermittel - animal feed
+pkw - private passenger vehicle
+lkw - truck
+strandbelegung - beach occupancy (very German thing, if you don't get it just try the beach in Mallorca with all the Germans and their towls on it)
+bundesstrasse - national road
+geschlecht - sex
+weiblich - female
+covid19 - If you don't know that one you must have been living under a rock the past 2 years and counting.
