@@ -85,7 +85,7 @@ p1 <- year %>%
            color="#808080") +
   scale_color_manual(values = c("#800000", "#808080")) +
   labs(title = "Cumulative number of gendered and non-gendered data sets per year",
-       y = "Cummulative frequency (thousands)",
+       y = "Cummulative number (thousands)",
        x = "") +
   theme_minimal() +
   geom_hline(yintercept = 0) +
@@ -93,9 +93,15 @@ p1 <- year %>%
         panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank())
 
+#to add static annotations to plot
+y2015 <- grobTree(textGrob("27%", x=0.23,  y=0.89, hjust=0,
+                          gp=gpar(col="#800000", fontsize=12), lineheight = 2))
+y2018 <- grobTree(textGrob("9%", x=0.58,  y=0.86, hjust=0,
+                           gp=gpar(col="#800000", fontsize=12)))
+y2021 <- grobTree(textGrob("6%", x=0.92,  y=0.84, hjust=0,
+                           gp=gpar(col="#800000", fontsize=12)))
 
-grob <- grobTree(textGrob("27%", x=0.08,  y=0.76, hjust=0,
-                          gp=gpar(col="#808080", fontsize=8)))
+
 
 p2<- perc %>%
   mutate(gendered = ifelse(gendered == 1, "Gen", "Nge")) %>%
@@ -112,9 +118,14 @@ p2<- perc %>%
         panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(),
         axis.title.y=element_text(colour="white"),
-        axis.text.y=element_text(colour="white")) 
+        axis.text.y=element_text(colour="white")) +
+  annotation_custom(y2015) +
+  annotation_custom(y2018) +
+  annotation_custom(y2021)
 
 fig1 <- grid.arrange(p1, p2, ncol = 1)
+fig1
+
 ggsave("outputs/datasets-yearly.png", dpi = 400, fig1)
 
 
