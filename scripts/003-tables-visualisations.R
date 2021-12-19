@@ -115,56 +115,57 @@ p2<- perc %>%
         axis.text.y=element_text(colour="white")) 
 
 fig1 <- grid.arrange(p1, p2, ncol = 1)
+ggsave("outputs/datasets-yearly.png", dpi = 400, fig1)
 
 
 #gendered and total
 
-gendered_year <- df %>%
-  filter_at(.vars = vars(title, description, tags), 
-            .vars_predicate = any_vars(str_detect(., "frauen|weiblich|geschlecht"))) %>%
-  group_by(year = lubridate::year(date)) %>%
-  summarise(n = n()) %>%
-  mutate(freq = prop.table(n),
-         perc = freq * 100,
-         cum_perc = cumsum(perc),
-         cum_n = cumsum(n)) %>%
-  round(2)
-
-total_year <- df %>%
-  group_by(year = lubridate::year(date)) %>%
-  summarise(n = n()) %>%
-  mutate(freq = prop.table(n),
-         perc = freq * 100,
-         cum_perc = cumsum(perc),
-         cum_n = cumsum(n)) %>%
-  round(2)
-
-fig <- full_join(gendered_year, total_year, by = "year", suffix = c(".gendered", ".total"))
-fig[is.na(fig)] <- 0 #replaces all NA with 0 (only for gendered data sets)
-
-fig %>% #plots total n
-  ggplot(aes(x = year)) +
-  scale_x_continuous(breaks = seq(2013, 2021, 1)) +
-  geom_point(aes(y = n.total), color = "black", fill = "black", shape = "o") +
-  geom_line(aes(y= n.total), color = "black") +
-  geom_point(aes(y = n.gendered), color = "red", fill = "red", shape = "o") +
-  geom_line(aes(y = n.gendered), color = "red") +
-  labs(title = "Number of gendered and total data sets per year",
-       y = "number of data sets") +
-  theme_minimal()
-
-fig %>% #plots cummulative n
-  ggplot(aes(x = year)) +
-  scale_x_continuous(breaks = seq(2013, 2021, 1)) +
-  geom_point(aes(y = cum_n.total), color = "black", fill = "black", shape = "o") +
-  geom_line(aes(y= cum_n.total), color = "black") +
-  geom_point(aes(y = cum_n.gendered), color = "red", fill = "red", shape = "o") +
-  geom_line(aes(y = cum_n.gendered), color = "red") +
-  labs(title = "Cumulative number of gendered and total data sets per year",
-       y = "number of data sets") +
-  theme_minimal()
-
-##datasets per topic
+##gendered_year <- df %>%
+##  filter_at(.vars = vars(title, description, tags), 
+##            .vars_predicate = any_vars(str_detect(., "frauen|weiblich|geschlecht"))) %>%
+##  group_by(year = lubridate::year(date)) %>%
+##  summarise(n = n()) %>%
+##  mutate(freq = prop.table(n),
+##         perc = freq * 100,
+##         cum_perc = cumsum(perc),
+##         cum_n = cumsum(n)) %>%
+##  round(2)
+##
+##total_year <- df %>%
+##  group_by(year = lubridate::year(date)) %>%
+##  summarise(n = n()) %>%
+##  mutate(freq = prop.table(n),
+##         perc = freq * 100,
+##         cum_perc = cumsum(perc),
+##         cum_n = cumsum(n)) %>%
+##  round(2)
+##
+##fig <- full_join(gendered_year, total_year, by = "year", suffix = c(".gendered", ".total"))
+##fig[is.na(fig)] <- 0 #replaces all NA with 0 (only for gendered data sets)
+##
+##fig %>% #plots total n
+##  ggplot(aes(x = year)) +
+##  scale_x_continuous(breaks = seq(2013, 2021, 1)) +
+##  geom_point(aes(y = n.total), color = "black", fill = "black", shape = "o") +
+##  geom_line(aes(y= n.total), color = "black") +
+##  geom_point(aes(y = n.gendered), color = "red", fill = "red", shape = "o") +
+##  geom_line(aes(y = n.gendered), color = "red") +
+##  labs(title = "Number of gendered and total data sets per year",
+##       y = "number of data sets") +
+##  theme_minimal()
+##
+##fig %>% #plots cummulative n
+##  ggplot(aes(x = year)) +
+##  scale_x_continuous(breaks = seq(2013, 2021, 1)) +
+##  geom_point(aes(y = cum_n.total), color = "black", fill = "black", shape = "o") +
+##  geom_line(aes(y= cum_n.total), color = "black") +
+##  geom_point(aes(y = cum_n.gendered), color = "red", fill = "red", shape = "o") +
+##  geom_line(aes(y = cum_n.gendered), color = "red") +
+##  labs(title = "Cumulative number of gendered and total data sets per year",
+##       y = "number of data sets") +
+##  theme_minimal()
+##
+####datasets per topic
 
 # add columns per topic to check whether topic is present in dataset
 groups_df <- df %>%
@@ -225,12 +226,15 @@ for (i in 1:length(list)) {
 #order a list
 #x[order(sapply(x, function(x) x[1], simplify=TRUE), decreasing=TRUE)]
 
+title_list <- c("Health", "Justice", "Society", "Science", "Education", "Government", "Economy", "Regions", 
+               "Transport", "Energy", "Agriculture", "Environment" )
+
 rm(i)
 for (i in 1:length(x)){
   name = paste0("w", i)
   chart <- waffle(x[[i]], rows = 10,
-                 colors = c("#808080", "#8a0303"),
-                 title = list[i],
+                 colors = c("#808080", "#FF69B4"),
+                 title = title_list[i],
                  legend_pos = "none")
   assign(name, chart)
 }
@@ -242,20 +246,16 @@ fig_2 <- grid.arrange(w5, w6, w7, w8, ncol = 4)
 fig_3 <- grid.arrange(w9, w10, w11, w12, ncol = 4)
 
 fig2 <- grid.arrange(fig_1, fig_2, fig_3,
-                     top = textGrob("Percent of gendred datasets per topic",
+                     top = textGrob("Total gendered datasets per topic",
                                     x = 0,
                                     just = "left",
                                     gp = gpar(fontsize = 18)))
 
 
-##gendered_topics %>%
-##  ggplot(aes(fill = gendered, y = perc, x = topic)) + 
-##  geom_bar(position="stack", stat="identity") +
-##  coord_flip()
+ggsave("outputs/datasets-topics.png", dpi = 400, fig2)
 
 
-
-##words that separate topics
+#####words that separate topics
 
 #which topic are most common
 
