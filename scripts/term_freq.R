@@ -95,4 +95,4 @@ fig3a <- ggplot(dd, aes(x = 1.001, y = frequency)) +
   labs(title = "Gotta set priorities",
        y = "Term number in the portal")
 
-ggsave("outputs/datasets-yearly.png", dpi = 400, fig3a)
+ggsave("outputs/words.png", dpi = 400, fig3a)
