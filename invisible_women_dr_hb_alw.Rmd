@@ -17,7 +17,6 @@ No wait. Actually, a lot of stuff happened in between. On our journey we changed
 Btw, it all started with her:
 
 
-
 ## On the look for gendered open data
 
 Our conviction is that *open data provided by a government should be inclusive of important societal issues like gender*. SO we started right at ['govdata.de'](https://www.govdata.de/) as it is THE official German open data portal maintained by the national administration. It is a portal that contains links to open data across Germany and thus acts as a gatekeeper to other trustworthy sources of open data. To this end it contains metadata (basically data about data) for more than 54000 data sets which can be found by interested individuals. To our dismay our first search results on the platform did not give us our desired data set on bone fractures or commuting behaviour for the city of Berlin. We decided to let go of our beloved snow example and broadened our search for any gendered datasets. We searched in titles, topics and keywords for any hints of gender – and we had to realize: there are just barely any datasets at all which contain a variable for gender.
@@ -114,7 +113,18 @@ We used metadata in rdf form to analyze the prevalence of gender in 54517 datase
 
 ## What we did:
 
-We started with our search for open data. We considered several data sources however settled for ['govdata.de'](https://www.govdata.de/)as it acts as a gatekeeper with its collection of links and metadata about German public administration datasets. 
+For the purpose of exploring the gender data gap, we analysed the ['govdata.de'](https://www.govdata.de/) portal metadata. The portal serves as the central point to access administrative data from the federal, state and local governments in Germany and aggregates data sources from 13 federal states. At the time of the writing of this report, it consisted of 55207 data sets.
+
+Every data set in the portal is described by metadata. Metadata is literally "data that provides information about other data", and in this case, it refers to properties of data sets, such as who created it and when and what it is about. Metadata is provided by the depositors of the data, that is, public servants across Germany who collect, manage and use data in their work and who deposit the data to the portal voluntarily. Luckily, the portal uses standardised metadata structures which means that (almost) all data sets have the same types of metadata; however, the depth of the description ultimately depends on the depositor. We accessed the metadata for all data sets using the portal's CKAN-powered API  ["endpoint']("https://www.govdata.de/ckan/api"). CKAN, as a leading data management system for open government data, has already developed methods that allow for easy retrieval of metadata. For the purpose of this article, we have used the following metadata: titles, short descriptions, depositor-defined keywords, topics and the data deposition date. 
+
+Our data analysis included:
+
+1. Data cleaning
+2. Text mining and visualisations
+
+DINAH; CAN YOU ADD ON DATA CLEANING; YOU DID SOME BITS THERE
+
+To analyse the gender data gap, we have compared the data sets that include gender as an information to those who do not. We defined the "gendered" data sets as the ones whose metadata mention "gender", "women" or "female" in either title, description or keywords. It is possible that this strategy omitted some gendered data sets (and included some that are less than meaningful); however, as data depositors know their data best, it is likely a good approximation of whether or not the data set has data split by gender. We then compared the total number of gendered and non-gendered data sets per year and per topic. DINAH; WILL YOU ADD TOPIC MODELS HERE?
 
 The term frequency modelling was done on the tabs column of the data set as these represent deliberately assigned keywords. The 100 most frequent terms were determined. For illustrative purposes the 10 selected terms fell in either of three categories 1)terms more prevalent than gender which were deemed to be culturally telling for German datasets (7 terms) 2)two terms that were associated with gender - "geschlecht" and "weiblich" 3) as well as the term "covid19" due to its importance in the current pandemic (at the time of writing this article). The horizontal bars for the term have a length proportional to their prevalence (between 796 for "covid19" to 6284 for "bebauungsplan") and are ordered from most to least prevalent out of the selection. The general dataset was used during this process.
 
