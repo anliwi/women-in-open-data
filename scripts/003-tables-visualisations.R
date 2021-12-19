@@ -80,10 +80,10 @@ p1 <- year %>%
   scale_x_continuous(breaks = seq(2013, 2021, 1)) +
   geom_line(aes(color = gendered)) +
   annotate(geom="text", x=2020.5, y=9, label="Gendered",
-           color="#FF69B4") +
+           color="#800000") +
   annotate(geom="text", x=2019.2, y=20, label="Non-gendered",
            color="#808080") +
-  scale_color_manual(values = c("#FF69B4", "#808080")) +
+  scale_color_manual(values = c("#800000", "#808080")) +
   labs(title = "Cumulative number of gendered and non-gendered data sets per year",
        y = "Cummulative frequency (thousands)",
        x = "") +
@@ -103,7 +103,7 @@ p2<- perc %>%
   geom_point(aes(color = gendered, size = cum_perc), shape = 15) +
   scale_x_continuous(breaks = seq(2013, 2021, 1)) +
   scale_size(range = c(.1, 24)) +
-  scale_color_manual(values = c("#FF69B4", "#808080")) +
+  scale_color_manual(values = c("#800000", "#808080")) +
   labs(title = "Ratio of gendered and non-gendered data sets per year",
        y = "Percent",
        x="") +
@@ -233,7 +233,7 @@ rm(i)
 for (i in 1:length(x)){
   name = paste0("w", i)
   chart <- waffle(x[[i]], rows = 10,
-                 colors = c("#808080", "#FF69B4"),
+                 colors = c("#808080", "#800000"),
                  title = title_list[i],
                  legend_pos = "none")
   assign(name, chart)

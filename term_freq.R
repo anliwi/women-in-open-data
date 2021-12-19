@@ -1,5 +1,6 @@
 data <- read.csv(choose.files())
 
+
 library(stringr)
 library(stopwords)
 library(tidyverse)
@@ -33,6 +34,8 @@ library(ggplot2)
 library(ggthemes)
 
 
+
+
 ggplot(keyword_freq, 
        aes(x=frequency, 
            y=reorder(term, frequency))) +
@@ -50,3 +53,19 @@ ggplot(keyword_freq,
   theme_wsj(base_size=8)+ 
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank())
+
+
+
+##library(ggrepel)
+##ggplot(keyword_freq, aes(x = "1", y = frequency, label = term)) +
+##  geom_point(aes(size = frequency), shape = 15) +
+##  scale_size(range = c(.1, 15)) +
+##  geom_label_repel(aes(size = frequency),
+##                   #force=1,
+##                   direction = 'x',
+##                   nudge_x = 0.2,
+##                   segment.size=0.1)
+##     
+
+
+  
