@@ -65,5 +65,16 @@ We did used metadata in rdf form to analyzre the prevalence of gender in 54517 d
 
 ## What we did:
 
-We started with our search for open data. We considered several data sources however settled for ['govdata.de'](https://www.govdata.de/)as it acts as a gatekeeper with its collection of links and metadata about German public administration datasets. 
+For the purpose of exploring the gender data gap, we analysed the ['govdata.de'](https://www.govdata.de/) portal metadata. The portal serves as the central point to access administrative data from the federal, state and local governments in Germany and aggregates data sources from 13 federal states. At the time of the writing of this report, it consisted of 55207 data sets.
+
+Every data set in the portal is described by metadata. Metadata is literally "data that provides information about other data", and in this case, it refers to properties of data sets, such as who created it and when and what it is about. Metadata is provided by the depositors of the data, that is, public servants across Germany who collect, manage and use data in their work and who deposit the data to the portal voluntarily. Luckily, the portal uses standardised metadata structures which means that (almost) all data sets have the same types of metadata; however, the depth of the description ultimately depends on the depositor. We accessed the metadata for all data sets using the portal's CKAN-powered API  ["endpoint']("https://www.govdata.de/ckan/api"). CKAN, as a leading data management system for open government data, has already developed methods that allow for easy retrieval of metadata. For the purpose of this article, we have used the following metadata: titles, short descriptions, depositor-defined keywords, topics and the data deposition date. 
+
+Our data analysis included:
+
+1. Data cleaning
+2. Text mining and visualisations
+
+DINAH; CAN YOU ADD ON DATA CLEANING; YOU DID SOME BITS THERE
+
+To analyse the gender data gap, we have compared the data sets that include gender as an information to those who do not. We defined the "gendered" data sets as the ones whose metadata mention "gender", "women" or "female" in either title, description or keywords. It is possible that this strategy omitted some gendered data sets (and included some that are less than meaningful); however, as data depositors know their data best, it is likely a good approximation of whether or not the data set has data split by gender. We then compared the total number of gendered and non-gendered datasets per year and per topic. DINAH; WILL YOU ADD TOPIC MODELS HERE?
 
