@@ -30,6 +30,8 @@ names(keyword_freq) <-  c("term", "frequency")
 keyword_freq <-  keyword_freq[keyword_freq$term %in% c('bebauungsplan','strandbelegung', 'scharbeutz', 'futtermittel','pkw','lkw','bundesstrasse','geschlecht','weiblich', 'covid19'), ]
 
 library(ggplot2)
+library(ggthemes)
+
 
 ggplot(keyword_freq, 
        aes(x=frequency, 
@@ -45,6 +47,6 @@ ggplot(keyword_freq,
         y = "",
         title = "term frequency in open data",
         subtitle = "Gotta set priorities") +
-  theme_minimal() + 
+  theme_wsj(base_size=8)+ 
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank())

@@ -29,6 +29,9 @@ groups_df <- clean_df %>%
   mutate(wf = str_detect(groups,"wirtschaft und finanzen")) %>%
   mutate(jros = str_detect(groups,"justiz rechtssystem und oeffentliche sicherheit"))
 
+##### prepare data for topic analysis #####
+
+## 1 topic model compare all gender non-containing datasets with all gender containing datasets
 
 full_df <- groups_df %>%
   rowwise() %>%
@@ -36,25 +39,50 @@ full_df <- groups_df %>%
     str_detect(c_across(title:tags), "frauen|weiblich|geschlecht"), na.rm = TRUE))
 
 
+# divide datasets
 
-# reduce dataframe to id and column that should be analyzed
-test_df <- clean_df[,c("id","tags")]
+full_gender <- subset(full_df, gendered == 1, select = c(1:6))
+full_gender <- full_gender[,2:6]
+full_gender <- tibble::rowid_to_column(full_gender, "id")
 
-# transform it into a quanteda corpus
-clean_corp <- corpus(test_df,docid_field = "id",text_field = "tags")
+full_nongender <- subset(full_df, gendered == 0, select = c(1:6))
+full_nongender <- full_nongender[,2:6]
+full_nongender <- tibble::rowid_to_column(full_nongender, "id")
+
+
+# reduce datasets to id and description
+gender_tpm1_df <- full_gender[,c("id","title")]
+nongender_tpm1_df <- full_nongender[,c("id","title")]
+
+
+# transform both  into quanteda corpora
+gender_tpm1_corp <- corpus(gender_tpm1_df,docid_field = "id",text_field = "title")
+nongender_tpm1_corp <- corpus(nongender_tpm1_df,docid_field = "id",text_field = "title")
+
 
 # tokenize the corpus
-clean_tokens <- tokens(clean_corp)
+gender_tpm1_tokens <- tokens(gender_tpm1_corp)
+nongender_tpm1_tokens <- tokens(nongender_tpm1_corp)
+
 
 # transform tokens object into document feature matrix
-clean_dfm <- dfm(clean_tokens,remove_numbers = TRUE, remove_punct = TRUE, remove_symbols = TRUE, remove = stopwords("german"))
+gender_tpm1_dfm <- dfm(gender_tpm1_tokens,remove_numbers = TRUE, remove_punct = TRUE, remove_symbols = TRUE, remove = stopwords("german"))
+nongender_tpm1_dfm <- dfm(nongender_tpm1_tokens,remove_numbers = TRUE, remove_punct = TRUE, remove_symbols = TRUE, remove = stopwords("german"))
+
 
 # set the number of themes
-anzahl.themen <- 10
+number.themes <- 10
+
+
 # transform dfm into form that is suitable for topicmodel package
-dfm2topicmodels <- convert(clean_dfm, to = "topicmodels")
+gender_tpm1 <- convert(gender_tpm1_dfm, to = "topicmodels")
+nongender_tpm1 <- convert(nongender_tpm1_dfm, to = "topicmodels")
+
+
 # perform the LDA
-lda.modell <- LDA(dfm2topicmodels, anzahl.themen)
+gender_lda.model <- LDA(gender_tpm1, number.themes)
+nongender_lda.model <- LDA(nongender_tpm1, number.themes)
+
 # show 10 most related words per topic in a dataframe
-ergebnis_lda <- as.data.frame(terms(lda.modell, 10))
-ergebnis_lda
+results_gender_lda <- as.data.frame(terms(gender_lda.model, 5))
+results_nongender_lda <- as.data.frame(terms(nongender_lda.model, 5))
