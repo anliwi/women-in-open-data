@@ -49,26 +49,28 @@ keyword_freq <-  keyword_freq[keyword_freq$term %in% c('bebauungsplan','strandbe
 
 keyword_freq2 <-  keyword_freq[keyword_freq$term %in% c('bebauungsplan', 'tourismus'  ,'bodennutzung', 'futtermittel', 'strandbelegung','bundesstrasse','geschlecht', 'weiblich'), ]
 
-#plotting the 10 selected terms for illustrative porposes in a bar chart
+#plotting the 10 selected terms for illustrative purposes in a bar chart
 
-ggplot(keyword_freq, 
+tf_plot <- ggplot(keyword_freq, 
        aes(x=frequency, 
            y=reorder(term, frequency))) +
-  geom_point(color="red", 
-             size = 2) +
+  geom_point(color=c("#808080","#808080","#808080","#808080", "#808080", "#808080", "#808080","#800000", "#800000","#808080"), 
+             size = 3) +
   geom_segment(aes(x = 40, 
                    xend = frequency, 
                    y = reorder(term, frequency), 
                    yend = reorder(term, frequency)),
-               color = "lightgrey") +
+               color = "grey") +
   labs (x = "term frequency",
         y = "",
-        title = "term frequency in open data",
-        subtitle = "Gotta set priorities") +
-  theme_wsj(base_size=8)+ 
+        title = "Term Frequency on govdata.de",
+        subtitle = "Gotta set priorities",
+        caption="as from over 55000 datasets") +
+  theme_gray(base_size=8)+ 
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank())
 
+ggsave("tf_plot.png", width = 7, height = 6, dpi = 200, tf_plot)
 
 
 #Other possiblity
