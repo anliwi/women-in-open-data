@@ -45,8 +45,8 @@ So how did we do that exactly? We used the descriptions of the datasets as input
 
 library(dplyr)
 library(tidyverse)
-table1_df <- read_csv("outputs/table_1_gender_ges.csv")
-table2_df <- read_csv("outputs/table_2_nongender_ges.csv")
+table1_df <- read_csv("outputs/table_1_gender_ges_eng.csv")
+table2_df <- read_csv("outputs/table_2_nongender_ges_eng.csv")
 
 library(kableExtra)
   
@@ -127,77 +127,3 @@ To analyse the gender data gap, we have compared the data sets that include gend
 To go one step deeper into the comparison of the gendered vs nongendered datasets we attempted to do topicmodelling for both subsets using the LDA-algorithm. We used the descriptions of the datasets as the text to be analyzed by this unsupervised learning algorithm. We knew that the applicability of the LDA algorithm to our case is/might be limited, as the quantity of words in the description of the datasets is rather small. Nevertheless we analyzed the four topic fields that contain most gendered datasets, devided them in the two subsets of gendered vs. nongendered datasets and extracted 10 topics (aka groups of words) for each one of them. It became clear that one the one hand the data was not clean and prepared enough for quantitative text analysis, and on the other hand the quantity of text maybe not big enough, because the algorithm produced a variation of topics while re-running it, reproducibility could only be ensured by setting a seed. The results have to be interpreted with caution and therefore we decided to only present a small glimpse of it to the reader. Going beyond the scope of this project, other methods of quantitative text analysis should be used to dig deeper into the topic differences between the two subsets of data.
 
 The term frequency modelling was done on the tabs column of the data set as these represent deliberately assigned keywords. The 100 most frequent terms were determined. For illustrative purposes the 10 selected terms fell in either of three categories 1) terms more prevalent than gender which were deemed to be culturally telling for German datasets (7 terms) 2) two terms that were associated with gender - "geschlecht" and "weiblich" 3) as well as the term "covid19" due to its importance in the current pandemic (at the time of writing this article). The horizontal bars for the term have a length proportional to their prevalence (between 796 for "covid19" to 6284 for "bebauungsplan") and are ordered from most to least prevalent out of the selection. The general dataset was used during this process.
-
-## Topic models - translation
-
-Translations for Table 1
-zahlen = numbers
-faelle = cases
-gemeldete(n) = registered
-daten = data
-kommunizierten = communicated
-felder = fields
-feldtrenner = field separator
-datensatz = dataset
-pflege = care/nursing
-eigene = own
-wohnen = living
-zufriedenheit = satisfaction
-wohnsituation = living situation
-hilfe = help
-erfahrungen = experiences
-beratung = consultation
-folgenden = following
-kreise = districts
-staedte = cities
-kreisfreien = district-free
-maennlich = male
-ausgewaehlten = selected
-jahr = year
-todesursachen = causes of death
-fachabteilungen = specialist departments
-gestorbene = died
-regionale = regional
-
-
-Translations for Table 2
-
-de = short for german
-einwohner = inhabitant
-pro = per
-kreises = (of the) district
-schwerpunkte = focus areas
-kreis = district
-kleve = city of kleve
-anzahl = quantity
-aachen = city of Aachen
-apotheken = pharmacies
-staedteregion = cities region
-personen = people
-verzeichnis = register
-liste = list
-wesel = city of wesel
-daten = data
-ueber = of
-haftung = liability
-laermbelastung = noise exposure
-laermkartierung = noise mapping
-ballungsraeumen = metropolitan areas
-kartiert = mapped 
-strategischen = strategic
-datensatz = dataset
-
-
-
-## Term frequency translation
-
-bebauungsplan - construction plan
-scharbeutz - random place in Germany
-futtermittel - animal feed
-pkw - private passenger vehicle
-lkw - truck
-strandbelegung - beach occupancy (very German thing, if you don't get it just visit any beach on the island of Mallorca with all the Germans and their towels on it)
-bundesstrasse - national road
-geschlecht - sex
-weiblich - female
-covid19 - If you don't know that one you must have been living under a rock the past 2 years and counting.
