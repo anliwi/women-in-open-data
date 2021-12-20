@@ -36,9 +36,16 @@ Now, as we have seen the overall amount let's see if we can narrow down where th
 ![Figure 2](./outputs/datasets-topics.PNG)
 
 As you can see there are 12 topics within the datasets. Gendered datasets only show up in 7 topics: Health, Justice, Society, Science, Education and Government.
-Unsurprisingly, the data sets that are connected to women have a caring connotation. Important to note is, that one dataset can be assigned to several topics. So, in the next step we wanted to find out what gendered vs. non-gendered datasets in these broad topics are about. We did that with the help of the LDA algorithm. This algorithm (it is like an elaborate instruction for the computer on what to do) - the LDA (latent dirichlet allocation is a generative statistical model that allows sets of observations to be explained by grouping them through computation) - can be used to find the most important groups (aka topics) of words. Thus, the name: topic modeling. 
+Unsurprisingly, the data sets that are connected to women have a caring connotation. Important to note is, that one dataset can be assigned to several topics. 
 
-We used the descriptions of the datasets, as they provided the biggest quantity of text and hand-selected three of the 10 topics that the algorithm spit out. Once for the subset of not gendered health datasets and once for the subset of health dataset that contain gender.
+So, in the next step we wanted to find out what gendered vs. non-gendered datasets in these broad topics are about. We did that with the help of the LDA algorithm. This algorithm (it is like an elaborate instruction for the computer on what to do) - the LDA (latent dirichlet allocation is a generative statistical model that allows sets of observations to be explained by grouping them through computation) - can be used to find the most important groups (aka topics) of words. Thus, the name: topic modeling. 
+
+- We used the descriptions of the datasets as input to feed the algorithm as they provided the biggest quantity of text 
+- we did that for the four topics that contain most gender
+- realized that there is only limited applicability, unsupervised algorithm, missing reprudocability, still a bit unleaned data
+- therefore limited liability of the results - we only show you a selection for the health topic field
+- 
+#and hand-selected three of the 10 topics that the algorithm spit out. Once for the subset of not gendered health datasets and once for the subset of health dataset that contain gender.
 
 
 ```{r echo=FALSE, message=FALSE,warning=FALSE}
@@ -68,7 +75,12 @@ table2_df %>%
 
 ```
 
-If you do not speak German you might want to check out our translations at the bottom of the article. We opted to not take the beauty of German words away from you though. On a serious note: we find the topic of nursing/caring only in the gendered subset (topic 6) and another citizen related topic of causes of death (topic 7). On the other side we find infrastructure related topics for the ungendered datasets like pharmacy locations (topic 5) and noise pollution mapping (topic 7). These findings are not really surprising as we know, that women are very over represented in the nursing/care sector and it doesn't make any sense to gender infrastucture topics. Interestingly, you see that Covid appears in both of the subsets (topic 1 for the gendered datasets and topic 3 for the ungendered datasets). That is interesting since we only have ungendered data on Covid in Germany. To sum this up: you have to keep in mind, that the topicmodel-algorithm is normally used to larger quantities of text and therefore the applicability to our description snippets is only limited.
+If you do not speak German you might want to check out our translations at the bottom of the article. We opted to not take the beauty of German words away from you though. 
+
+
+On a serious note: we find the topic of nursing/caring only in the gendered subset (topic 6) and another citizen related topic of causes of death (topic 7). On the other side we find infrastructure related topics for the ungendered datasets like pharmacy locations (topic 5) and noise pollution mapping (topic 7). These findings are not really surprising as we know, that women are very over represented in the nursing/care sector and it doesn't make any sense to gender infrastucture topics. Interestingly, you see that Covid appears in both of the subsets (topic 1 for the gendered datasets and topic 3 for the ungendered datasets). That is interesting since we only have ungendered data on Covid in Germany. 
+
+#(maybe move that up) To sum this up: you have to keep in mind, that the topicmodel-algorithm is normally used to larger quantities of text and therefore the applicability to our description snippets is only limited.
 
 
 ## The Take-away
@@ -109,7 +121,7 @@ So, there you are. That was the hopefully nice-enough-to-read article about our 
 
 ## Executive Summary
 
-We used metadata in rdf form to analyze the prevalence of gender in 54517 datasets from opengov.de. The data was retrieved through an API and cleaned. For the analysis different part sof the dataset were subset in order to filter for gendered data. Four different data analysis approaches were performed: calculating the percentage for the overall datsets and gendered data there of and comparing on an annual basis,filtering the amount of gendered and none gendered datasets per topic, unsupervised topic modeling with LDA on the keywords, term frequency analysis on the keywords. We found that gendered datasets only make up a small amount (~10 percent)of overall datasets and are confined to 7 out of 12 topics. Furthermore, the most prevalent data appears to be treating construction and traffic. There is still a considerable gender data gap on this portal.
+We used metadata in rdf form to analyze the prevalence of gender in 54517 datasets from opengov.de. The data was retrieved through an API and cleaned. For the analysis different part sof the dataset were subset in order to filter for gendered data. Four different data analysis approaches were performed: calculating the percentage for the overall datsets and gendered data there of and comparing on an annual basis,filtering the amount of gendered and none gendered datasets per topic, unsupervised topic modeling with LDA on the keywords, term frequency analysis on the keywords. We found that gendered datasets only make up a small amount (~10 percent) of overall datasets and are confined to 7 out of 12 topics. Furthermore, the most prevalent data appears to be treating construction and traffic. There is still a considerable gender data gap on this portal. (HERE I WOULD TRY TO FIND A BETTER ENDING)
 
 
 ## What we did:
@@ -123,11 +135,11 @@ Our data analysis included:
 1. Data cleaning
 2. Text mining and visualisations
 
-A big part of the project was preparatory work of the data, as the provided API could only be queried in steps of 1000, leading to a list of 55 nested lists containing all metadata. We needed to extract the relevant metadata for our purpose: titles, short descriptions, depositor-defined keywords, topics and the data deposition date. After combining all these information into one final dataframe the data was cleaned (removing german stopwords, unnecessary punctuation, numbers etc.)
+A big part of the project was preparatory work of the data, as the provided API could only be queried in sets of 1000, leading to a list of 55 nested lists containing all metadata. We needed to extract the relevant metadata for our purpose: titles, short descriptions, depositor-defined keywords, topics and the data deposition date. After combining all these information into one final dataframe the data was cleaned (removing german stopwords, unnecessary punctuation, numbers etc.)
 
 To analyse the gender data gap, we have compared the data sets that include gender as an information to those who do not. We defined the "gendered" data sets as the ones whose metadata mention "gender", "women" or "female" in either title, description or keywords. It is possible that this strategy omitted some gendered data sets (and included some that are less than meaningful); however, as data depositors know their data best, it is likely a good approximation of whether or not the data set has data split by gender. We then compared the total number of gendered and non-gendered data sets per year and per topic. 
 
-To go one step deeper into the comparison of the gendered vs nongendered datasets we attempted to do a topicmodelling for both subsets using the descriptions of the datasets. Using the LDA algorithm, we extracted 10 topics for each subset. The applicability of the LDA algorithm to our case is limited, as the quantity of words in the description of the datasets is rather small. In our case that led to the situation that the unsupervised algorithm produced a variation of topics while re-running it. Therefore the results have to be interpreted with caution.
+To go one step deeper into the comparison of the gendered vs nongendered datasets we attempted to do topicmodelling for both subsets using the LDA-algorithm. We used the descriptions of the datasets as the text to be analyzed by this unsupervised learning algorithm. We knew that the applicability of the LDA algorithm to our case is/might be limited, as the quantity of words in the description of the datasets is rather small. Nevertheless we analyzed the four topic fields that contain most gendered datasets, devided them in the two subsets of gendered vs. nongendered datasets and extracted 10 topics (aka groups of words) for each one of them. It became clear that one the one hand the data was not clean and prepared enough for quantitative text analysis, and on the other hand the quantity of text maybe not big enough, because the algorithm produced a variation of topics while re-running it, reproducibility could only be ensured by setting a seed. The results have to be interpreted with caution and therefore we decided to only present a small glimpse of it to the reader. Going beyond the scope of this project, other methods of quantitative text analysis should be used to dig deeper into the topic differences between the two subsets of data.
 
 The term frequency modelling was done on the tabs column of the data set as these represent deliberately assigned keywords. The 100 most frequent terms were determined. For illustrative purposes the 10 selected terms fell in either of three categories 1) terms more prevalent than gender which were deemed to be culturally telling for German datasets (7 terms) 2) two terms that were associated with gender - "geschlecht" and "weiblich" 3) as well as the term "covid19" due to its importance in the current pandemic (at the time of writing this article). The horizontal bars for the term have a length proportional to their prevalence (between 796 for "covid19" to 6284 for "bebauungsplan") and are ordered from most to least prevalent out of the selection. The general dataset was used during this process.
 

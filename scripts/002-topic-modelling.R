@@ -12,7 +12,7 @@ if (!require("pacman")) install.packages("pacman")
 pacman::p_load(tidyverse,topicmodels,quanteda,kableExtra,gridExtra,webshot)
 
 # load dataset
-clean_df <- read_csv("data/clean_data.csv")
+clean_df <- read_csv("../data/clean_data.csv")
 
 groups_df <- clean_df %>%
   mutate(wt = str_detect(groups,"wissenschaft und technologie")) %>%

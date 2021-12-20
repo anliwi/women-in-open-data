@@ -33,8 +33,7 @@ raw_data$groups <- gsub("[)]", "", raw_data$groups)
 clean_df <- raw_data[,2:6]
 clean_df <- tibble::rowid_to_column(clean_df, "id")
 
-#removes punctuation, lowercase
-#could use a tweak -- do we remove numbers? do we remove all punctuation apart from hyphen between words?
+## remove punctuation, lowercase
 
 clean_df <- clean_df %>%
   mutate(across(
