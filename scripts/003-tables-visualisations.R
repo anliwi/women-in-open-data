@@ -3,11 +3,14 @@ Sys.setlocale("LC_ALL", "en_US.UTF-8")
 
 #packages
 if (!require("pacman")) install.packages("pacman")
-pacman::p_load(tidyverse, tidytext, stopwords,foreach, forcats, waffle, gridExtra, directlabels, grid, ggrepel)
+pacman::p_load(tidyverse, tidytext, stopwords, foreach, forcats, waffle, gridExtra, directlabels, grid, ggrepel)
 
 df <- read.csv("data/clean_data.csv")
 
 df <- df %>% mutate(date = lubridate::ymd(date))
+
+##########################TOTAL DATASETS
+#not used in the article
 
 #data sets in total -- with and without gender
 
@@ -21,8 +24,6 @@ total <- df %>%
          perc = freq * 100) %>%
   round(2)
 
-total
-
 #waffle plot, total percentage of plots
 
 total <- c(94, 6)
@@ -32,9 +33,10 @@ waffle(total, rows = 10,
        legend_pos = "none")
 
 
+#################################
 ####data sets per year -- with and without gender
 
-#table - gendered vs non-gendered
+####tables - gendered vs non-gendered
 
 year <- df %>%
   rowwise() %>%
@@ -44,7 +46,6 @@ year <- df %>%
   group_by(gendered, year = lubridate::year(date)) %>%
   summarise(n = n()) %>%
   mutate(freq = prop.table(n),
-         perc = freq * 100,
          cum_sum = cumsum(n),
          cum_sum_00 = cum_sum/1000,
          cum_perc = cum_sum/n *100) %>% #cummulative sum in thousands
@@ -71,6 +72,7 @@ perc <- df %>%
          cum_perc = cum_n / cum_year * 100) %>%
   mutate(across(where(is.numeric), round, 2))
 
+####plots - gendered vs non-gendered
 
 
 p1 <- year %>%
@@ -95,7 +97,7 @@ p1 <- year %>%
 
 #to add static annotations to plot
 y2015 <- grobTree(textGrob("27%", x=0.23,  y=0.89, hjust=0,
-                          gp=gpar(col="#800000", fontsize=12), lineheight = 2))
+                          gp=gpar(col="#800000", fontsize=12)))
 y2018 <- grobTree(textGrob("9%", x=0.58,  y=0.86, hjust=0,
                            gp=gpar(col="#800000", fontsize=12)))
 y2021 <- grobTree(textGrob("6%", x=0.92,  y=0.84, hjust=0,
@@ -126,57 +128,11 @@ p2<- perc %>%
 fig1 <- grid.arrange(p1, p2, ncol = 1)
 fig1
 
-ggsave("outputs/datasets-yearly.png", dpi = 400, fig1)
+ggsave("outputs/datasets-yearly.png", width = 7, height = 6, dpi = 200, fig1)
 
 
-#gendered and total
-
-##gendered_year <- df %>%
-##  filter_at(.vars = vars(title, description, tags), 
-##            .vars_predicate = any_vars(str_detect(., "frauen|weiblich|geschlecht"))) %>%
-##  group_by(year = lubridate::year(date)) %>%
-##  summarise(n = n()) %>%
-##  mutate(freq = prop.table(n),
-##         perc = freq * 100,
-##         cum_perc = cumsum(perc),
-##         cum_n = cumsum(n)) %>%
-##  round(2)
-##
-##total_year <- df %>%
-##  group_by(year = lubridate::year(date)) %>%
-##  summarise(n = n()) %>%
-##  mutate(freq = prop.table(n),
-##         perc = freq * 100,
-##         cum_perc = cumsum(perc),
-##         cum_n = cumsum(n)) %>%
-##  round(2)
-##
-##fig <- full_join(gendered_year, total_year, by = "year", suffix = c(".gendered", ".total"))
-##fig[is.na(fig)] <- 0 #replaces all NA with 0 (only for gendered data sets)
-##
-##fig %>% #plots total n
-##  ggplot(aes(x = year)) +
-##  scale_x_continuous(breaks = seq(2013, 2021, 1)) +
-##  geom_point(aes(y = n.total), color = "black", fill = "black", shape = "o") +
-##  geom_line(aes(y= n.total), color = "black") +
-##  geom_point(aes(y = n.gendered), color = "red", fill = "red", shape = "o") +
-##  geom_line(aes(y = n.gendered), color = "red") +
-##  labs(title = "Number of gendered and total data sets per year",
-##       y = "number of data sets") +
-##  theme_minimal()
-##
-##fig %>% #plots cummulative n
-##  ggplot(aes(x = year)) +
-##  scale_x_continuous(breaks = seq(2013, 2021, 1)) +
-##  geom_point(aes(y = cum_n.total), color = "black", fill = "black", shape = "o") +
-##  geom_line(aes(y= cum_n.total), color = "black") +
-##  geom_point(aes(y = cum_n.gendered), color = "red", fill = "red", shape = "o") +
-##  geom_line(aes(y = cum_n.gendered), color = "red") +
-##  labs(title = "Cumulative number of gendered and total data sets per year",
-##       y = "number of data sets") +
-##  theme_minimal()
-##
-####datasets per topic
+#################################
+####data sets per topic -- with and without gender
 
 # add columns per topic to check whether topic is present in dataset
 groups_df <- df %>%
@@ -197,14 +153,14 @@ groups_df <- df %>%
 # transform logical to numeric
 groups_df[,7:19] <- lapply(groups_df[,7:19], as.numeric)
 
-#data set containg a variable "gendered" that shows wheather or not the dataset has gender
+#data set containg a variable "gendered" that shows whether or not the data set has gender
 gendered_groups <- groups_df %>%
   rowwise() %>%
   mutate(gendered = +any(
     str_detect(c_across(title:tags), "frauen|weiblich|geschlecht"), na.rm = TRUE)) %>% #looking for keywords in title, description and tags
   ungroup()
 
-#extracting topics for gender  
+#calculating percentage of gendered and non-gendered datasets per topic
 gendered_topics <- foreach(i = 1:ncol(gendered_groups[,7:19]), .combine = rbind) %do% {
   gendered_groups %>%
     filter(!!as.symbol(names(gendered_groups[, 6+i])) == 1) %>%
@@ -217,10 +173,14 @@ gendered_topics <- foreach(i = 1:ncol(gendered_groups[,7:19]), .combine = rbind)
     relocate(topic)
 }
 
+#peek into the table
 gendered_topics
 
+#list of topics sorted by percentage in gendered
 list <- gendered_topics %>% filter(gendered == 1) %>% arrange(desc(perc)) %>% pull(topic) #ordered list of topics by perc in gedered datasets
 
+
+#extracting percentages of gendered and non-gendered data sets per topic to plot 
 x <- list()
 
 rm(i)
@@ -230,16 +190,13 @@ for (i in 1:length(list)) {
     pull(perc) %>%
     round(0)
   x[[i]] <- perc
-#assign(list[i], x)
 }
 
-
-#order a list
-#x[order(sapply(x, function(x) x[1], simplify=TRUE), decreasing=TRUE)]
-
+#creating a vector of titles for plots
 title_list <- c("Health", "Justice", "Society", "Science", "Education", "Government", "Economy", "Regions", 
                "Transport", "Energy", "Agriculture", "Environment" )
 
+#plotting waffle plots in a loop for all topics
 rm(i)
 for (i in 1:length(x)){
   name = paste0("w", i)
@@ -250,26 +207,27 @@ for (i in 1:length(x)){
   assign(name, chart)
 }
 
-chart_names <- paste0("w", seq(1, 13, 1))
-
+#combining plots in a grid
 fig_1 <- grid.arrange(w1, w2, w3, w4, ncol = 4)
 fig_2 <- grid.arrange(w5, w6, w7, w8, ncol = 4)
 fig_3 <- grid.arrange(w9, w10, w11, w12, ncol = 4)
 
 fig2 <- grid.arrange(fig_1, fig_2, fig_3,
-                     top = textGrob("Total gendered datasets per topic",
+                     top = textGrob("Ratio of gendered datasets per topic\n",
                                     x = 0,
                                     just = "left",
                                     gp = gpar(fontsize = 18)))
+fig2
+
+#saving plot
+ggsave("outputs/datasets-topics.png", width = 7, height = 6, dpi = 200, fig2)
 
 
-ggsave("outputs/datasets-topics.png", dpi = 400, fig2)
 
-
-#####words that separate topics
+###############################EXPLORING WORDS THAT SEPARATE TOPICS
+#not used in the article
 
 #which topic are most common
-
 gendered_topics %>%
   filter(gendered == 1) %>%
   arrange(desc(perc))
@@ -299,7 +257,7 @@ gendered_words <- foreach(i = 1:length(list), .combine = rbind) %do% {
     relocate(topic) #moves topic column to the front
 } 
 
-# to chart each group individually
+#words that separate gendered and non gendered data sets for health
 gendered_words %>%
   filter(topic == "wt") %>% #filters for topic
   group_by(gendered) %>%
@@ -310,17 +268,35 @@ gendered_words %>%
   facet_wrap(~topic + gendered, ncol = 2, scales = "free") +
   labs(x = "tf-idf", y = NULL)
 
+#words that separate gendered and non gendered data sets for justice
+gendered_words %>%
+  filter(topic == "jros") %>% #filters for topic
+  group_by(gendered) %>%
+  slice_max(tf_idf, n = 15) %>% #gets the 15 most distinctive words
+  ungroup() %>%
+  ggplot(aes(tf_idf, fct_reorder(word, tf_idf), fill = gendered)) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~topic + gendered, ncol = 2, scales = "free") +
+  labs(x = "tf-idf", y = NULL)
 
-############WORD PFLEGE IN GENDERED AND NON GENDERED DATASETS (TOPIC == HEALT)
+#words that separate gendered and non gendered data sets for society
+gendered_words %>%
+  filter(topic == "gb") %>% #filters for topic
+  group_by(gendered) %>%
+  slice_max(tf_idf, n = 15) %>% #gets the 15 most distinctive words
+  ungroup() %>%
+  ggplot(aes(tf_idf, fct_reorder(word, tf_idf), fill = gendered)) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~topic + gendered, ncol = 2, scales = "free") +
+  labs(x = "tf-idf", y = NULL)
 
-gendered_groups %>%
-  mutate(gendered = as.factor(gendered)) %>%
-  filter(ge == 1) %>%
-  mutate(word = as.numeric(str_detect(description, "pflege"))) %>%
-  drop_na(word) %>%
-  group_by(gendered, word) %>%
-  summarise(n = n()) %>%
-  mutate(freq = prop.table(n),
-         perc = freq * 100) 
-
-
+#words that separate gendered and non gendered data sets for science
+gendered_words %>%
+  filter(topic == "wt") %>% #filters for topic
+  group_by(gendered) %>%
+  slice_max(tf_idf, n = 15) %>% #gets the 15 most distinctive words
+  ungroup() %>%
+  ggplot(aes(tf_idf, fct_reorder(word, tf_idf), fill = gendered)) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~topic + gendered, ncol = 2, scales = "free") +
+  labs(x = "tf-idf", y = NULL)
