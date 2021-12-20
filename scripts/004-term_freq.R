@@ -1,20 +1,34 @@
+#importing the data
+#if you want to replicate our findings please sleect the clean data file in the data folder within the repository
+
 data <- read.csv(choose.files())
+
+#installing the necessary libraries
 
 library(stringr)
 library(stopwords)
 library(tidyverse)
 library(tidyr)
 library(dplyr)
+library(ggplot2)
+library(ggthemes)
+
+#defining which stopwords to remove
 
 stopwords_regex = paste(stopwords('German'), collapse = '\\b|\\b')
 stopwords_regex = paste0('\\b', stopwords_regex, '\\b')
 
+#selecting the necessary column witht he keywords
+
 keywords <- data %>%
   select(tags)
 
+#cleaning the keywords for the analysis
 
 keywords <-  str_replace_all(keywords, "[[:punct:]]", "")
 keywords <-  tolower(keywords)
+
+#determining term frequency for the 100 most prominent terms within the keywords column
 
 keyword_freq <- keywords %>%
   strsplit(" ") %>%
@@ -23,21 +37,19 @@ keyword_freq <- keywords %>%
   sort(decreasing = TRUE) %>% 
   head(100)
 
+#assigning the filtered words to a dataframe and assigning an index
+
 keyword_freq <- as.data.frame(keyword_freq)  
 keyword_freq$index <- 1:nrow(keyword_freq)
-
 names(keyword_freq) <-  c("term", "frequency")
+
+#selecting the 10 illustrative examples within the list of 100
+
 keyword_freq <-  keyword_freq[keyword_freq$term %in% c('bebauungsplan','strandbelegung', 'scharbeutz', 'futtermittel','pkw','lkw','bundesstrasse','geschlecht','weiblich', 'covid19'), ]
 
 keyword_freq2 <-  keyword_freq[keyword_freq$term %in% c('bebauungsplan', 'tourismus'  ,'bodennutzung', 'futtermittel', 'strandbelegung','bundesstrasse','geschlecht', 'weiblich'), ]
 
-
-
-library(ggplot2)
-library(ggthemes)
-
-
-
+#plotting the 10 selected terms for illustrative porposes in a bar chart
 
 ggplot(keyword_freq, 
        aes(x=frequency, 
