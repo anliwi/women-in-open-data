@@ -14,15 +14,13 @@ Well, long story short: that did not work out. We couldn't find any usable data.
 
 No wait. Actually, a lot of stuff happened in between. On our journey we changed direction a couple of times and still got to some interesting insight. So let us take you along the ride.
 
-Btw, it all started with her:
+Btw, it all started with this:
 
+![The Inspiration](./other_res/img_book.jpg)
 
-## On the look for gendered open data
+## The iterative search for data
 
-Our conviction is that *open data provided by a government should be inclusive of important societal issues like gender*. SO we started right at ['govdata.de'](https://www.govdata.de/) as it is THE official German open data portal maintained by the national administration. It is a portal that contains links to open data across Germany and thus acts as a gatekeeper to other trustworthy sources of open data. To this end it contains metadata (basically data about data) for more than 54000 data sets which can be found by interested individuals. To our dismay our first search results on the platform did not give us our desired data set on bone fractures or commuting behaviour for the city of Berlin. We decided to let go of our beloved snow example and broadened our search for any gendered datasets. We searched in titles, topics and keywords for any hints of gender – and we had to realize: there are just barely any datasets at all which contain a variable for gender.
-
-## Taking a step back: redefining the goal
-
+Our conviction is that *open data provided by a government should be inclusive of important societal issues like gender*. SO we started right at ['govdata.de'](https://www.govdata.de/) as it is THE official German open data portal maintained by the national administration. It is a portal that contains links to open data across Germany and thus acts as a gatekeeper to other trustworthy sources of open data. To this end it contains metadata (basically data about data) for more than 54000 data sets which can be found by interested individuals. To our dismay our first search results on the platform did not give us our desired data set on bone fractures or commuting behaviour for the city of Berlin. We decided to let go of our beloved snow example and broadened our search for any gendered datasets. We searched in titles, topics and keywords for any hints of gender – and we had to realize: there are very few any datasets at all which contain a variable for gender.
 As our goal of finding open access data about gender for Germany on official government websites led us straight into a data desert or at least Savannah we needed to reconsider our project goal. Instead of dropping our feminist motivation or our commitment to German open data we decided to look at it from a meta-level. As the govdata-portal provides standardized metadata for its datasets, we decided to do a meta-analysis of the existing datasets on the govdata-portal to describe and visualize the gender gap in the German open government data. 
 
 ## Our Findings
@@ -36,16 +34,13 @@ Now, as we have seen the overall amount let's see if we can narrow down where th
 ![Figure 2](./outputs/datasets-topics.PNG)
 
 As you can see there are 12 topics within the datasets. Gendered datasets only show up in 7 topics: Health, Justice, Society, Science, Education and Government.
-Unsurprisingly, the data sets that are connected to women have a caring connotation. Important to note is, that one dataset can be assigned to several topics. 
+Unsurprisingly, the data sets that are connected to women have a caring connotation. Important to note is, that one dataset can be assigned to several topics. We think that to which topics the data is linked matters as gendered data is necessary in all areas. This has been shown by the Swedish snow clearing example. To connect gender to traffic data might still seem counterintuitive to some. However, as shown by the success in lowering bone fractures it is still important to apply this angle. Having seen at the surface how data is linked and where gendered data is concentrated we decided to go a bit deeper.
 
-So, in the next step we wanted to find out what gendered vs. non-gendered datasets in these broad topics are about. We did that with the help of the LDA algorithm. This algorithm (it is like an elaborate instruction for the computer on what to do) - the LDA (latent dirichlet allocation is a generative statistical model that allows sets of observations to be explained by grouping them through computation) - can be used to find the most important groups (aka topics) of words. Thus, the name: topic modeling. 
+So, in the next step we wanted to find out what gendered vs. non-gendered datasets in these broad topics are about. To just that we used the LDA algorithm. Side note: an algoirthm is like an elaborate instruction for the computer on what to do. The LDA (latent dirichlet allocation is a generative statistical model that allows sets of observations to be explained by grouping them through computation) can be used to find the most important groups (aka topics) of words. Thus, the name: topic modeling. 
 
-- We used the descriptions of the datasets as input to feed the algorithm as they provided the biggest quantity of text 
-- we did that for the four topics that contain most gender
-- realized that there is only limited applicability, unsupervised algorithm, missing reprudocability, still a bit unleaned data
-- therefore limited liability of the results - we only show you a selection for the health topic field
+So how did we do that exactly? We used the descriptions of the datasets as input to feed the algorithm as they provided the biggest quantity of text. We did that for the four topics that contain most gendered data. You have to keep in mind, that the topicmodel-algorithm is normally used to larger quantities of text and therefore the applicability to our description snippets is only limited. Then a realization came - there is only limited applicability due to our text sample being too small. Also it is difficult to understand how exactly the unsupervised algorithm is coming up with the results. This makes our topics almost impossible to reproduce which is less than ideal. In addition to that as you can see there is still some uncleaned data left within the data set. Therefore, we decided to make these issues transparent to you at this point. These results are non-robust and should be taken with a pinch of salt. To not loose yourself in a labyrinth of terms we only show you a selection for the health topic field so you get an idea about what we were looking at.
 - 
-#and hand-selected three of the 10 topics that the algorithm spit out. Once for the subset of not gendered health datasets and once for the subset of health dataset that contain gender.
+
 
 
 ```{r echo=FALSE, message=FALSE,warning=FALSE}
@@ -78,18 +73,14 @@ table2_df %>%
 If you do not speak German you might want to check out our translations at the bottom of the article. We opted to not take the beauty of German words away from you though. 
 
 
-On a serious note: we find the topic of nursing/caring only in the gendered subset (topic 6) and another citizen related topic of causes of death (topic 7). On the other side we find infrastructure related topics for the ungendered datasets like pharmacy locations (topic 5) and noise pollution mapping (topic 7). These findings are not really surprising as we know, that women are very over represented in the nursing/care sector and it doesn't make any sense to gender infrastucture topics. Interestingly, you see that Covid appears in both of the subsets (topic 1 for the gendered datasets and topic 3 for the ungendered datasets). That is interesting since we only have ungendered data on Covid in Germany. 
-
-#(maybe move that up) To sum this up: you have to keep in mind, that the topicmodel-algorithm is normally used to larger quantities of text and therefore the applicability to our description snippets is only limited.
-
+On a serious note: we find the topic of nursing/caring only in the gendered subset (topic 6) and another citizen related topic of causes of death (topic 7). On the other side we find infrastructure related topics for the ungendered datasets like pharmacy locations (topic 5) and noise pollution mapping (topic 7). These findings are not really surprising as we know, that women are very over represented in the nursing/care sector. Interestingly, you see that Covid appears in both of the subsets (topic 1 for the gendered datasets and topic 3 for the ungendered datasets). That is interesting since we only have ungendered data on Covid in Germany. 
 
 ## The Take-away
 
-Well, huh, tough one. We are aware that open data in and of itself is a great ideal that is - at least in the German context - still learning to walk. It carries great promise but is not quite there yet. So while it is amazing, that the German administration is providing open data, there is still a lot to improve on various levels: (1) the metadata provided needs to be improved. It is great, that a OECD wide standard is used for the structure of the metadata, but there is definitely room for improvement for the standardization of tags. (2) the available datasets are not very diverse (even if we only talk about gender, leaving out other characteristics). So if you want to do, and there are plenty of reasons you might, policy research about gender, you fall into the gender gap. We hope that this will change in the upcoming years and there are signs of hope: From 2022 every German ministry is obliged to appoint Chief Data Officers and put together Data-Teams. So we will monitor this development closely and look forward to actually do some research into gender with open data sets soon!
+Well, huh, tough one. We are aware that open data in and of itself is a great ideal that is - at least in the German context - still learning to walk. It carries great promise but is not quite there yet. So while it is amazing, that the German administration is providing open data, there is still a lot to improve on various levels: (1) the metadata provided needs to be improved. It is great, that a OECD wide standard is used for the structure of the metadata, but there is definitely room for improvement for the standardization of tags. (2) the available datasets are not very diverse (even if we only talk about gender, leaving out other characteristics). So if you want to dopolicy research about gender - and there are plenty of reasons you might - you fall into the **gender data gap**. We hope that this will change in the upcoming years and there are signs of hope: From 2022 every German ministry is obliged to appoint Chief Data Officers and put together Data-Teams. So we will monitor this development closely and look forward to actually do some research into gender with open data sets soon!
 
 Until then we leave you with our (clearly exaggerated) impression of the govdata.de priorities at the moment:
 
-#As we struggled to find data sets that were usable for our research interest one must realize that the open data sets are not very diverse and more treating specific subject areas.  Let's see whether it will be easier to find the women. For the time being we just wanted to share this - priorities first, ey:
 
 ![Figure 5](./outputs/tf_plot.PNG)
 
@@ -105,7 +96,7 @@ So, there you are. That was the hopefully nice-enough-to-read article about our 
 
 * Helena Bakic(xxx)
 
-* Anna-Lisa Wirth (213286(at)mds.hertie-school.org)
+* Anna-Lisa Wirth (213286@mds.hertie-school.org)
 
 **Parts**
 
