@@ -327,4 +327,23 @@ table2 <- nongenderges_lda_vis %>%
   row_spec(c(0:10),color = "#808080")
 
 
+##translated tables
+
+#creating a table for gendered data and saving it
+g_topic1 <- c("numbers", "cases", "registered ('gemeldeten')", "registered ('gemeldete')", "data", "Corona virus", "communicated", "fields", "field separator", "dataset")
+g_topic6 <- c("care/nursing", "own", "living", "dataset", "satisfaction", "living situation", "help", "experiences", "consultation", "following")
+g_topic7 <- c("districts", "cities", "district-free", "male", "selected", "year", "causes of death", "specialist departments", "died", "regional")
+
+table_gendered <- as_tibble(cbind(g_topic1, g_topic6, g_topic7))
+table_gendered <- rename(table_gendered, "Topic 1" = g_topic1, "Topic 6" = g_topic6, "Topic 7" = g_topic7)
+write.csv(table_gendered,"../outputs/table_1_gender_ges_eng.csv", row.names = FALSE)
+
+#non-gendered
+n_topic3 <- c("Corona virus", "Germany", "inhabitant", "Schleswig-Holstein", "https", "per", "www.schleswig-holstein.de", "name", "(of the) district", "focus areas")
+n_topic5 <- c("district", "Kleve (city)", "quantity", "Aachen (city)", "pharmacies", "cities region", "people", "register", "list", "Wesel (city)")
+n_topic7 <- c("data", "of", "liability", "noise exposure", "noise mapping", "metropolitan areas", "mapped", "strategic", "dataset", "http")
+
+table_nongen <- as_tibble(cbind(n_topic3, n_topic5, n_topic7))
+table_nongen <- rename(table_nongen, "Topic 3" = n_topic3, "Topic 5" = n_topic5, "Topic 7" = n_topic7)
+write.csv(table_nongen,"../outputs/table_2_nongender_ges_eng.csv", row.names = FALSE)
 
