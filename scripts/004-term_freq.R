@@ -73,7 +73,7 @@ tf_plot <- ggplot(keyword_freq1,
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank())
 
-ggsave("tf_plot.png", width = 7, height = 6, dpi = 200, tf_plot)
+ggsave("../outputs/tf_plot.png", width = 7, height = 6, dpi = 200, tf_plot)
 
 
 
